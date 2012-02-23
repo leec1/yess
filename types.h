@@ -5,22 +5,22 @@
 typedef int bool;
 
 //Y-86 Instruction Codes
-#define HALT 0
-#define NOP 1
-#define CMOV 2
-#define IRMOVL 3
-#define RMMOVL 4
-#define MRMOVL 5
-#define OPL 6
-#define JXX 7 
-#define CALL 8
-#define RET 9
-#define PUSHL 10
-#define POPL 11
-#define DUMP 12
+#define HALT 0x0
+#define NOP 0x1
+#define CMOV 0x2
+#define IRMOVL 0x3
+#define RMMOVL 0x4
+#define MRMOVL 0x5
+#define OPL 0x6
+#define JXX 0x7 
+#define CALL 0x8
+#define RET 0x9
+#define PUSHL 0xa
+#define POPL 0xb
+#define DUMP 0xc
 
 //Stat Codes- Valid?
-#define RNONE 15
+#define RNONE 0xf
 
 #define SAOK 1
 #define SHLT 2

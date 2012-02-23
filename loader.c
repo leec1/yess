@@ -10,7 +10,7 @@ int lineNum, addr, prevAddr, numBytes, prevBytes;
 int testLine(char *line);
 long int getAddress(char *line);
 void storeData(char *line);
-char * getData(char *line);
+//char * getData(char *line);
 
 /* openFile
  *      Attempts to open the #EXT file with the specified filename.
@@ -125,7 +125,7 @@ void storeData(char *line) {
     //if (numBytes > 0) printf("line data: %s\n", data);
 }*/
 
-char* getData(char *line) {
+/*char* getData(char *line) {
     char data[numBytes];
     char byte[2];
     int i;
@@ -135,4 +135,4 @@ char* getData(char *line) {
     }
     printf("%s -> %d\n", line[9], data);
     return data;
-}
+}*/

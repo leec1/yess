@@ -7,10 +7,10 @@ static dregister D;
 void decodeStage(){
     int valA = 0;
     int valB = 0;
-    int dstE = 15;
-    int dstM = 15;
-    int srcA = 15;
-    int srcB = 15;
+    int dstE = 0xf;
+    int dstM = 0xf;
+    int srcA = 0xf;
+    int srcB = 0xf;
     updateEregister(D.stat, D.icode, D.ifun, D.valC, valA, valB, dstE,
                     dstM, srcA, srcB);
 }
