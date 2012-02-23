@@ -13,7 +13,7 @@ bool writebackStage();
 wregister getWregister();
 void clearWregister();
 
-void updateWregister(int stat, int icode, int ifun, int rA, int rB,
-        int valC, int valP);
+void updateWregister(int stat, int icode, int valE, int valM,
+                     int dstE, int dstM);
 
 #endif

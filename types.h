@@ -20,10 +20,11 @@ typedef int bool;
 #define DUMP 12
 
 //Stat Codes- Valid?
-#define RNONE 15 
-#define SINS 8
-#define SHLT 9
-#define SADR 10
-#define SAOK 11
+#define RNONE 15
+
+#define SAOK 1
+#define SHLT 2
+#define SADR 3 
+#define SINS 4
 
 #endif

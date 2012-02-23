@@ -1,3 +1,4 @@
+#include "types.h"
 #include "writebackStage.h"
 
 // W register holds the input for the writeback stage. 
@@ -30,7 +31,12 @@ void clearWregister() {
 }
 
 
-void updateWregister(int stat, int icode, int ifun, int rA, int rB,
-        int valC, int valP){
-
+void updateWregister(int stat, int icode, int valE, int valM,
+                     int dstE, int dstM){
+    W.stat = stat;
+    W.icode = icode;
+    W.valE = valE;
+    W.valM = valM;
+    W.dstE = dstE;
+    W.dstM = dstM;
 }

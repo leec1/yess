@@ -15,7 +15,7 @@ mregister getMregister();
 void clearMregister();
 
 
-void updateMregister(int stat, int icode, int ifun, int rA, int rB,
-        int valC, int valP);
+void updateMregister(int stat, int icode, int Cnd, int valE, int valA,
+                     int dstE, int dstM);
 
 #endif

@@ -29,7 +29,16 @@ void clearEregister() {
 }
 
 
-void updateEregister(int stat, int icode, int ifun, int rA, int rB,
-        int valC, int valP){
-
+void updateEregister(int stat, int icode, int ifun, int valC, int valA,
+                     int valB, int dstE, int dstM, int srcA, int srcB){
+    E.stat = stat;
+    E.icode = icode;
+    E.ifun = ifun;
+    E.valC = valC;
+    E.valA = valA;
+    E.valB = valB;
+    E.dstE = dstE;
+    E.dstM = dstM;
+    E.srcA = srcA;
+    E.srcB = srcB;
 }

@@ -30,5 +30,11 @@ void clearDregister() {
 
 void updateDregister(int stat, int icode, int ifun, int rA, int rB, 
         int valC, int valP){
-
+    D.stat = stat;
+    D.icode = icode;
+    D.ifun = ifun;
+    D.rA = rA;
+    D.rB = rB;
+    D.valC = valC;
+    D.valP = valP;
 }

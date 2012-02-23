@@ -6,7 +6,7 @@ static mregister M;
 
 
 void memoryStage(){
-    //updateWregister(stat, icode, ifun, rA, rB, valC, valP);
+    updateWregister(M.stat, M.icode, M.valE, M.valA, M.dstE, M.dstM);
 }
 
 /* getMregister
@@ -30,7 +30,13 @@ void clearMregister() {
 }
 
 
-void updateMregister(int stat, int icode, int ifun, int rA, int rB,
-        int valC, int valP){
-
+void updateMregister(int stat, int icode, int Cnd, int valE, int valA,
+                     int dstE, int dstM){
+    M.stat = stat;
+    M.icode = icode;
+    M.Cnd = Cnd;
+    M.valE = valE;
+    M.valA = valA;
+    M.dstE = dstE;
+    M.dstM = dstM;
 }

@@ -1,11 +1,14 @@
 #include "types.h"
 #include "fetchStage.h"
 
+#include "memoryStage.h"
+#include "writebackStage.h"
+
 // F register holds the input for the fetch stage. 
 // It is only accessible from this file. (static)
 static fregister F;
 
-int selectPC(int a);
+int selectPC(int predPC);
 
 void fetchStage() {
     bool memError;
@@ -53,9 +56,6 @@ void fetchStage() {
             stat = SINS;
             break;
     }
-    //fetch instruction from memory by call getByte
-    //use instruction and f_pc to figure out values
-    //for stat, icode, ifun, rA, rB, valC, and vaP
 
     updateDregister(stat, icode, ifun, rA, rB, valC, valP);
 }
@@ -78,4 +78,14 @@ fregister getFregister() {
  */
 void clearFregister() {
     clearBuffer((char *) &F, sizeof(F));
+}
+
+int selectPC(int predPC) {
+    wregister W = getWregister();
+    mregister M = getMregister();
+    if (M.icode == JXX && !M.Cnd)
+        return M.valA;
+    if (W.icode == RET)
+        return W.valM;
+    return predPC;
 }
