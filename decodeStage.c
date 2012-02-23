@@ -5,7 +5,14 @@
 static dregister D;
 
 void decodeStage(){
-
+    int valA = 0;
+    int valB = 0;
+    int dstE = 15;
+    int dstM = 15;
+    int srcA = 15;
+    int srcB = 15;
+    updateEregister(D.stat, D.icode, D.ifun, D.valC, valA, valB, dstE,
+                    dstM, srcA, srcB);
 }
 
 /* getDregister

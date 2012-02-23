@@ -6,7 +6,7 @@
 static wregister W;
 
 bool writebackStage(){
-
+    if (W.stat != SAOK) return TRUE; // unless stat is A-OK, we should stop.
 
 }
 

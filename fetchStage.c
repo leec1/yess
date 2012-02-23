@@ -14,9 +14,9 @@ void fetchStage() {
     bool memError;
     unsigned int f_pc = selectPC(F.predPC);
 
-    unsigned char inst = getByte(f_pc, &memError);
+    unsigned char inst = getByte(f_pc, &memError); 
 
-    int stat = SAOK;
+    int stat = memError ? SADR : SAOK;
     int ifun = getBits(0, 3, inst);
     int icode = getBits(4, 7, inst);
     int rA = RNONE;
@@ -27,10 +27,12 @@ void fetchStage() {
     switch (icode) {
         case HALT:
             stat = SHLT;
+            //F.predPC = F.predPC + 1;
             break;
         case NOP:
+            F.predPC = F.predPC + 1;
             break;
-        case CMOV:
+        /*case CMOV:
             break;
         case IRMOVL:
             break;
@@ -49,15 +51,16 @@ void fetchStage() {
         case PUSHL:
             break;
         case POPL:
-            break;
+            break;*/
         case DUMP:
+            F.predPC = F.predPC + 1;
             break;
         default:
             stat = SINS;
             break;
     }
 
-    updateDregister(stat, icode, ifun, rA, rB, valC, valP);
+    updateDregister(stat, icode, ifun, rA, rB, valC, valP); 
 }
 
 /* getFregister
@@ -83,6 +86,7 @@ void clearFregister() {
 int selectPC(int predPC) {
     wregister W = getWregister();
     mregister M = getMregister();
+
     if (M.icode == JXX && !M.Cnd)
         return M.valA;
     if (W.icode == RET)
