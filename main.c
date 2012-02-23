@@ -5,6 +5,9 @@
 #include "memory.h"
 #include "dump.h"
 
+int clockCount;
+bool stop;
+
 void initialize();
 
 int main(int argc, char * argv[]) {
@@ -39,7 +42,8 @@ int main(int argc, char * argv[]) {
     //dumpProgramRegisters();
     //dumpProcessorRegisters();
     //dumpMemory(); 
-
+    
+    printf("\nTotal clock cycles = %d\n", clockCount);
 }
 
 void initialize() {

@@ -4,6 +4,11 @@
 // It is only accessible from this file. (static)
 static wregister W;
 
+bool writebackStage(){
+
+
+}
+
 /* getWregsiter
  *      Returns a copy of the W register.
  * Params:   none
@@ -22,4 +27,10 @@ wregister getWregister() {
  */
 void clearWregister() {
     clearBuffer((char *) &W, sizeof(W));
+}
+
+
+void updateWregister(int stat, int icode, int ifun, int rA, int rB,
+        int valC, int valP){
+
 }

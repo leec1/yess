@@ -13,6 +13,11 @@ typedef struct {
     unsigned int srcB;
 } eregister;
 
+void executeStage();
 eregister getEregister();
 void clearEregister();
+
+void updateEregister(int stat, int icode, int ifun, int rA, int rB,
+        int valC, int valP);
+
 #endif

@@ -44,9 +44,8 @@ bool load() {
             printf("Error on line %d\n%s\n", lineNum, line);
             return FALSE;           // found an error, stop parsing
         } else {
-            getData(line);
-            //storeData(line);     // good line, store it
-            //putByte(addr, getData(line), FALSE);
+            //getData(line);
+            storeData(line);     // good line, store it
         }
     } while (fgetc(file) != EOF);   // tests AND takes care of trailing \n
     fclose(file);                   // because we aren't barbarians

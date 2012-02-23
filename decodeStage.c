@@ -4,6 +4,10 @@
 // It is only accessible from this file. (static)
 static dregister D;
 
+void decodeStage(){
+
+}
+
 /* getDregister
  *     Returns a copy of the D regsiter.
  * Params:   none
@@ -22,4 +26,9 @@ dregister getDregister() {
  */
 void clearDregister() {
     clearBuffer((char *) &D, sizeof(D));
+}
+
+void updateDregister(int stat, int icode, int ifun, int rA, int rB, 
+        int valC, int valP){
+
 }

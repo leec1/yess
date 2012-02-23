@@ -9,6 +9,11 @@ typedef struct {
     unsigned int dstM;
 } wregister;
 
+bool writebackStage();
 wregister getWregister();
 void clearWregister();
+
+void updateWregister(int stat, int icode, int ifun, int rA, int rB,
+        int valC, int valP);
+
 #endif

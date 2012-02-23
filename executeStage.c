@@ -4,6 +4,10 @@
 // It is only accessible from this file. (static)
 static eregister E;
 
+void executeStage(){
+
+}
+
 /* getEregister
  *      Returns a copy of the eregister.
  * Params:   none
@@ -22,4 +26,10 @@ eregister getEregister() {
  */
 void clearEregister() {
     clearBuffer((char *) &E, sizeof(E));
+}
+
+
+void updateEregister(int stat, int icode, int ifun, int rA, int rB,
+        int valC, int valP){
+
 }

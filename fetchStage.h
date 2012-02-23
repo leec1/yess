@@ -4,6 +4,7 @@ typedef struct {
     unsigned int predPC;
 } fregister;
 
+void fetchStage();
 fregister getFregister();
 void clearFregister();
 #endif
