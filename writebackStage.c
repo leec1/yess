@@ -7,7 +7,15 @@ static wregister W;
 
 bool writebackStage(){
     if (W.stat != SAOK) return TRUE; // unless stat is A-OK, we should stop.
-
+    if (W.icode == DUMP) {
+        int flags = getBits(0, 3, W.valE);
+        if (flags & 0b0001 == 0b0001)
+            dumpProgramRegisters();
+        if (flags & 0b0010 == 0b0010)
+            dumpProcessorRegisters();
+        if (flags & 0b0100 == 0b0100)
+            dumpMemory();
+    }
 }
 
 /* getWregsiter
