@@ -25,7 +25,16 @@ int main(int argc, char * argv[]) {
         return 0;
     }
     
-    clo
+    clockCount = 0;
+    stop = FALSE;
+    while(!stop){
+        stop = writebackStage();
+        memoryStage();
+        executeStage();
+        decodeStage();
+        fetchStage();
+        clockCount++;
+    }
 
     //dumpProgramRegisters();
     //dumpProcessorRegisters();
