@@ -6,7 +6,7 @@ static mregister M;
 
 
 void memoryStage(){
-    updateWregister(stat, icode, ifun, rA, rB, valC, valP);
+    //updateWregister(stat, icode, ifun, rA, rB, valC, valP);
 }
 
 /* getMregister

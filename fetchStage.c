@@ -1,3 +1,4 @@
+#include "types.h"
 #include "fetchStage.h"
 
 // F register holds the input for the fetch stage. 
@@ -12,6 +13,7 @@ void fetchStage() {
 
     unsigned char inst = getByte(f_pc, &memError);
 
+    int stat = SAOK;
     int ifun = getBits(0, 3, inst);
     int icode = getBits(4, 7, inst);
     int rA = RNONE;
@@ -19,9 +21,7 @@ void fetchStage() {
     int valC = 0;
     int valP = 0;
     
-    stat = SAOK;
-
-    switch icode {
+    switch (icode) {
         case HALT:
             stat = SHLT;
             break;
@@ -57,7 +57,7 @@ void fetchStage() {
     //use instruction and f_pc to figure out values
     //for stat, icode, ifun, rA, rB, valC, and vaP
 
-    updateDregister(stat, icode, ifun, rA, rB, valc, valP);
+    updateDregister(stat, icode, ifun, rA, rB, valC, valP);
 }
 
 /* getFregister

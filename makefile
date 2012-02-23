@@ -36,7 +36,7 @@ dump.o: dump.h dump.c
 
 executeStage.o: executeStage.h executeStage.c
 
-fetchStage.o: fetchStage.h fetchStage.c
+fetchStage.o: types.h fetchStage.h fetchStage.c
 
 loader.o: types.h loader.h loader.c
 
