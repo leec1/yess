@@ -27,7 +27,7 @@ void fetchStage() {
     switch (icode) {
         case HALT:
             stat = SHLT;
-            //F.predPC = F.predPC + 1;
+            F.predPC = F.predPC + 1;
             break;
         case NOP:
             F.predPC = F.predPC + 1;
@@ -54,8 +54,14 @@ void fetchStage() {
             break;*/
         case DUMP:
             F.predPC = F.predPC + 1;
+            unsigned char byte0 = getByte(f_pc+1, &memError);
+            unsigned char byte1 = getByte(f_pc+2, &memError);
+            unsigned char byte2 = getByte(f_pc+3, &memError);
+            unsigned char byte3 = getByte(f_pc+4, &memError);
+            valC=buildWord(byte3, byte2, byte1, byte0);
             break;
         default:
+            F.predPC = F.predPC + 1; 
             stat = SINS;
             break;
     }
@@ -84,12 +90,14 @@ void clearFregister() {
 }
 
 int selectPC(int predPC) {
-    wregister W = getWregister();
-    mregister M = getMregister();
+    //wregister W = getWregister();
+    //mregister M = getMregister();
 
-    if (M.icode == JXX && !M.Cnd)
-        return M.valA;
-    if (W.icode == RET)
-        return W.valM;
+    //if (M.icode == JXX && !M.Cnd)
+    //    return M.valA;
+    //if (W.icode == RET)
+    //    return W.valM;
     return predPC;
 }
+
+

@@ -6,9 +6,11 @@
 static wregister W;
 
 bool writebackStage(){
-    if (W.stat != SAOK) return TRUE; // unless stat is A-OK, we should stop.
+    int memError = FALSE;
+    //if (W.stat != SAOK) return TRUE; // unless stat is A-OK, we should stop.
     if (W.icode == DUMP) {
-        int flags = getBits(0, 3, W.valE);
+        unsigned char flagByte = getByteNumber(&(W.valE)+3,&memError);
+        int flags = getBits(5, 8, flagByte);
         if (flags & 0b0001 == 0b0001)
             dumpProgramRegisters();
         if (flags & 0b0010 == 0b0010)
@@ -16,6 +18,8 @@ bool writebackStage(){
         if (flags & 0b0100 == 0b0100)
             dumpMemory();
     }
+
+    if (W.stat != SAOK) return TRUE; // unless stat is A-OK, we should stop.
 }
 
 /* getWregsiter

@@ -28,6 +28,8 @@ int main(int argc, char * argv[]) {
         return 0;
     }
     
+    //initializeFuncPtrArray();
+     
     clockCount = 0;
     stop = FALSE;
     while(!stop){
@@ -47,6 +49,7 @@ int main(int argc, char * argv[]) {
 }
 
 void initialize() {
+    initializeFuncPtrArray();
     clearMemory();
     clearRegisters();
     clearFregister();

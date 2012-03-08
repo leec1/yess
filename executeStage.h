@@ -20,4 +20,9 @@ void clearEregister();
 void updateEregister(int stat, int icode, int ifun, int valC, int valA,
                      int valB, int dstE, int dstM, int srcA, int srcB);
 
+void initializeFuncPtrArray();
+
+int doNothing();
+int dump();
+
 #endif

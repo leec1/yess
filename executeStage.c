@@ -1,11 +1,18 @@
+#include "types.h"
 #include "executeStage.h"
+#include <stdio.h>
+
 
 // E register holds the input for the execute stage.
 // It is only accessible from this file. (static)
 static eregister E;
+int (*funcArr[16])();
 
 void executeStage(){
-
+    int Cnd = 0x0;
+    int valE = (*funcArr[E.icode])();
+    //printf("%d", valE);
+    updateMregister(E.stat, E.icode, Cnd, valE, E.valA, E.dstE, E.dstM);
 }
 
 /* getEregister
@@ -41,4 +48,28 @@ void updateEregister(int stat, int icode, int ifun, int valC, int valA,
     E.dstM = dstM;
     E.srcA = srcA;
     E.srcB = srcB;
+}
+
+void initializeFuncPtrArray(){
+    funcArr[HALT] = &doNothing;
+    funcArr[NOP] = &doNothing;
+    funcArr[CMOV] = &doNothing;
+    funcArr[IRMOVL] = &doNothing;
+    funcArr[RMMOVL] = &doNothing;
+    funcArr[MRMOVL] = &doNothing;
+    funcArr[OPL] = &doNothing;
+    funcArr[JXX] = &doNothing;
+    funcArr[CALL] = &doNothing;
+    funcArr[RET] = &doNothing;
+    funcArr[PUSHL] = &doNothing;
+    funcArr[POPL] = &doNothing;
+    funcArr[DUMP] = &dump;
+}
+
+int doNothing(){
+    return 0;
+}
+
+int dump(){
+    return E.valC;
 }
