@@ -60,13 +60,15 @@ void fetchStage() {
             unsigned char byte2 = getByte(f_pc+3, &memError);
             unsigned char byte3 = getByte(f_pc+4, &memError);
             //printf(">>>>>>> bytes = %x\t%x\t%x\t%x\n", byte0, byte1, byte2, byte3);
-            valC = buildWord(byte3, byte2, byte1, byte0);
+            valC = buildWord(byte0, byte1, byte2, byte3);
             break;
         default:
             F.predPC = F.predPC + 1; 
             stat = SINS;
             break;
     }
+
+    valP = F.predPC;
 
     updateDregister(stat, icode, ifun, rA, rB, valC, valP); 
 }

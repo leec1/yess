@@ -11,7 +11,8 @@ bool writebackStage(){
     //if (W.stat != SAOK) return TRUE; // unless stat is A-OK, we should stop.
     if (W.icode == DUMP) {
         //printf("W.valE = %x\n", W.valE);
-        unsigned char flagByte = getByteNumber(3, W.valE);
+        //unsigned char flagByte = getByteNumber(0, W.valE);
+        unsigned char flagByte = W.valE;
         //int flags = getBits(5, 8, flagByte);
         //printf("flagbyte = %x\n", flagByte);
         //printf("flags: %x\t( %x & 0x1 )\n", flags, flags);
@@ -22,7 +23,7 @@ bool writebackStage(){
         if ((flagByte & 0x4) == 0x4)
             dumpMemory();
     }
-    if (W.stat != SAOK) return TRUE; // unless stat is A-OK, we should stop.
+    if (W.stat != SAOK && W.stat != 0) return TRUE; // unless stat is A-OK, we should stop.
     
     return FALSE;
 }
