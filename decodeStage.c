@@ -1,7 +1,9 @@
+#include <stdio.h>
+#include "types.h"
+#include "tools.h"
+#include "executeStage.h"
 #include "decodeStage.h"
 
-// D register holds the input for the decode stage.
-// It is only accessible from this file. (static)
 static dregister D;
 
 void decodeStage(){
@@ -44,4 +46,11 @@ void updateDregister(int stat, int icode, int ifun, int rA, int rB,
     D.rB = rB;
     D.valC = valC;
     D.valP = valP;
+}
+
+void printDregister() {
+    printf("\n=== Decode Stage ===\n");
+    printf("stat = %d\ticode = %x\tifun = %x\n", D.stat, D.icode, D.ifun);
+    printf("rA = %x\trB = %x\n", D.rA, D.rB);
+    printf("valC = %x\tvalP = %x\n", D.valC, D.valP);
 }

@@ -1,11 +1,12 @@
+#include <stdio.h>
+#include "types.h"
+#include "tools.h"
+#include "writebackStage.h"
 #include "memoryStage.h"
 
-// M register holds the input for the memory stage. 
-// It is only accessible from this file. (static)
 static mregister M;
 
-
-void memoryStage(){
+void memoryStage() {
     updateWregister(M.stat, M.icode, M.valE, M.valA, M.dstE, M.dstM);
 }
 
@@ -29,7 +30,6 @@ void clearMregister() {
     clearBuffer((char *) &M, sizeof(M));
 }
 
-
 void updateMregister(int stat, int icode, int Cnd, int valE, int valA,
                      int dstE, int dstM){
     M.stat = stat;
@@ -39,4 +39,11 @@ void updateMregister(int stat, int icode, int Cnd, int valE, int valA,
     M.valA = valA;
     M.dstE = dstE;
     M.dstM = dstM;
+}
+
+void printMregister() {
+    printf("\n=== Memory Stage ===\n");
+    printf("stat = %d\ticode = %x\tCnd = %x\n", M.stat, M.icode, M.Cnd);
+    printf("valE = %x\tvalA = %x\n", M.valE, M.valA);
+    printf("dstE = %x\tdstM = %x\n", M.dstE, M.dstM);
 }

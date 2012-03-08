@@ -25,4 +25,5 @@ void initializeFuncPtrArray();
 int doNothing();
 int dump();
 
+void printEregister();
 #endif

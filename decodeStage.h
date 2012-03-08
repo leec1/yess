@@ -18,4 +18,6 @@ void clearDregister();
 
 void updateDregister(int stat, int icode, int ifun, int rA, int rB,
         int valC, int valP);
+
+void printDregister();
 #endif

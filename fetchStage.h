@@ -7,4 +7,5 @@ typedef struct {
 void fetchStage();
 fregister getFregister();
 void clearFregister();
+void printFregister();
 #endif

@@ -1,25 +1,30 @@
+#include <stdio.h>
 #include "types.h"
+#include "tools.h"
+#include "dump.h"
 #include "writebackStage.h"
 
-// W register holds the input for the writeback stage. 
-// It is only accessible from this file. (static)
 static wregister W;
 
 bool writebackStage(){
-    int memError = FALSE;
+    //int memError = FALSE;
     //if (W.stat != SAOK) return TRUE; // unless stat is A-OK, we should stop.
     if (W.icode == DUMP) {
-        unsigned char flagByte = getByteNumber(&(W.valE)+3,&memError);
-        int flags = getBits(5, 8, flagByte);
-        if (flags & 0b0001 == 0b0001)
+        //printf("W.valE = %x\n", W.valE);
+        unsigned char flagByte = getByteNumber(3, W.valE);
+        //int flags = getBits(5, 8, flagByte);
+        //printf("flagbyte = %x\n", flagByte);
+        //printf("flags: %x\t( %x & 0x1 )\n", flags, flags);
+        if ((flagByte & 0x1) == 0x1)
             dumpProgramRegisters();
-        if (flags & 0b0010 == 0b0010)
+        if ((flagByte & 0x2) == 0x2)
             dumpProcessorRegisters();
-        if (flags & 0b0100 == 0b0100)
+        if ((flagByte & 0x4) == 0x4)
             dumpMemory();
     }
-
     if (W.stat != SAOK) return TRUE; // unless stat is A-OK, we should stop.
+    
+    return FALSE;
 }
 
 /* getWregsiter
@@ -51,4 +56,11 @@ void updateWregister(int stat, int icode, int valE, int valM,
     W.valM = valM;
     W.dstE = dstE;
     W.dstM = dstM;
+}
+
+void printWregister() {
+    printf("\n=== Writeback Stage ===\n");
+    printf("stat = %d\ticode = %x\n", W.stat, W.icode);
+    printf("valE = %x\tvalM = %x\n", W.valE, W.valM);
+    printf("dstE = %x\tdstM = %x\n", W.dstE, W.dstM);
 }

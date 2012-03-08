@@ -3,7 +3,15 @@
 #include "types.h"
 #include "tools.h"
 #include "memory.h"
+#include "registers.h"
+#include "loader.h"
 #include "dump.h"
+
+#include "fetchStage.h"
+#include "decodeStage.h"
+#include "executeStage.h"
+#include "memoryStage.h"
+#include "writebackStage.h"
 
 int clockCount;
 bool stop;
@@ -32,8 +40,14 @@ int main(int argc, char * argv[]) {
      
     clockCount = 0;
     stop = FALSE;
-    while(!stop){
+    while(!stop) {
+        /*printFregister();
+        printDregister();
+        printEregister();
+        printMregister();
+        printWregister();*/
         stop = writebackStage();
+        //printf("clock: %d\tstop?: %d\n", clockCount, stop);
         memoryStage();
         executeStage();
         decodeStage();
@@ -46,6 +60,8 @@ int main(int argc, char * argv[]) {
     //dumpMemory(); 
     
     printf("\nTotal clock cycles = %d\n", clockCount);
+
+    return 0;
 }
 
 void initialize() {

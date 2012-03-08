@@ -1,22 +1,23 @@
+#include <stdio.h>
 #include "types.h"
+#include "tools.h"
+#include "memory.h"
+#include "decodeStage.h"
 #include "fetchStage.h"
 
-#include "memoryStage.h"
-#include "writebackStage.h"
-
-// F register holds the input for the fetch stage. 
-// It is only accessible from this file. (static)
-static fregister F;
-
 int selectPC(int predPC);
+
+static fregister F;
 
 void fetchStage() {
     bool memError;
     unsigned int f_pc = selectPC(F.predPC);
 
-    unsigned char inst = getByte(f_pc, &memError); 
-
-    int stat = memError ? SADR : SAOK;
+    unsigned char inst = getByte(f_pc, &memError);
+    //printf(">> INSTRUCTION: %x\n", inst);
+    
+    //int stat = memError ? SADR : SAOK;
+    int stat = SAOK;
     int ifun = getBits(0, 3, inst);
     int icode = getBits(4, 7, inst);
     int rA = RNONE;
@@ -53,12 +54,13 @@ void fetchStage() {
         case POPL:
             break;*/
         case DUMP:
-            F.predPC = F.predPC + 1;
+            F.predPC = F.predPC + 5;
             unsigned char byte0 = getByte(f_pc+1, &memError);
             unsigned char byte1 = getByte(f_pc+2, &memError);
             unsigned char byte2 = getByte(f_pc+3, &memError);
             unsigned char byte3 = getByte(f_pc+4, &memError);
-            valC=buildWord(byte3, byte2, byte1, byte0);
+            //printf(">>>>>>> bytes = %x\t%x\t%x\t%x\n", byte0, byte1, byte2, byte3);
+            valC = buildWord(byte3, byte2, byte1, byte0);
             break;
         default:
             F.predPC = F.predPC + 1; 
@@ -100,4 +102,8 @@ int selectPC(int predPC) {
     return predPC;
 }
 
-
+void printFregister() {
+    printf("\n===========================================\n");
+    printf("\t\t%x\n", F.predPC);
+    printf("===========================================\n");
+}
