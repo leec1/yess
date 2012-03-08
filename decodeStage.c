@@ -22,7 +22,9 @@ unsigned int getSrcA() {
     if (D.icode == CMOV || D.icode == RMMOVL ||
         D.icode == OPL || D.icode == PUSHL)
         return D.rA;
-    return ESP;
+    else if (D.icode == POPL || D.icode == RET)
+        return ESP;
+    return RNONE;
 }
 
 unsigned int getSrcB() {
