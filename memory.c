@@ -1,4 +1,5 @@
 #include "types.h"
+#include "tools.h"
 #include "memory.h"
 
 // Array memory holds the contents of the phsyical memory.
@@ -49,7 +50,7 @@ void putByte(int address, unsigned char value, bool *memError) {
  * Modifies: memError - sets to TRUE if an error, FALSE otherwise
  */
 unsigned int getWord(int address, bool *memError) {
-    if (address&3 != 0) {
+    if ((address & 3) != 0) {
         *memError = TRUE;
         return 0;
     }
@@ -66,7 +67,7 @@ unsigned int getWord(int address, bool *memError) {
  * Modifies: memError - sets to TRUE if an error, FALSE otherwise
  */
 void putWord(int address, unsigned int value, bool *memError) {
-    if (address & 3 != 0) *memError = TRUE;
+    if ((address & 3) != 0) *memError = TRUE;
     else store(address/4, value, memError);
 }
 
