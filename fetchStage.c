@@ -38,15 +38,17 @@ void fetchStage() {
         case NOP:
             F.predPC = F.predPC + 1;
             break;
-        /*case CMOV:
+        case CMOV:
             break;
         case IRMOVL:
+            F.predPC = F.predPC + 6;
             break;
         case RMMOVL:
             break;
         case MRMOVL:
             break;
         case OPL:
+            F.predPC = F.predPC + 2;
             break;
         case JXX:
             break;
@@ -57,7 +59,7 @@ void fetchStage() {
         case PUSHL:
             break;
         case POPL:
-            break;*/
+            break;
         case DUMP:
             F.predPC = F.predPC + 5;
             unsigned char byte0 = getByte(f_pc+1, &memError);

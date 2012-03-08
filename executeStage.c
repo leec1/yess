@@ -118,10 +118,10 @@ void initializeFuncPtrArray(){
     funcArr[HALT] = &doNothing;
     funcArr[NOP] = &doNothing;
     funcArr[CMOV] = &doNothing;
-    funcArr[IRMOVL] = &doNothing;
+    funcArr[IRMOVL] = &performIrmovl;
     funcArr[RMMOVL] = &doNothing;
     funcArr[MRMOVL] = &doNothing;
-    funcArr[OPL] = &doNothing;
+    funcArr[OPL] = &performOpl;
     funcArr[JXX] = &doNothing;
     funcArr[CALL] = &doNothing;
     funcArr[RET] = &doNothing;

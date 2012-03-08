@@ -30,9 +30,9 @@ bool load() {
     if (file == NULL) return FALSE;
     char line[128];                 // storage for line data
     lineNum = 1;
-    while (1) {
-        fscanf(file, "%[^\n]", line); //handy dandy "read until \n"
-        if (fgetc(file) == EOF) break;
+    while (fgets(line, 128, file) != NULL) {
+        //fscanf(file, "%[^\n]", line); //handy dandy "read until \n"
+        //if (fgetc(file) == EOF) break;
         //printf("%s\n", line);
         int result = testLine(line);
         if (result >= 0) lineNum++; // count good lines and comments
