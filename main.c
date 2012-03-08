@@ -68,6 +68,7 @@ int main(int argc, char * argv[]) {
 }
 
 void initialize() {
+    W_valE = 0; W_dstE = 0;
     initializeFuncPtrArray();
     initializeCC();
     clearMemory();

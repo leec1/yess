@@ -12,8 +12,8 @@ void decodeStage(unsigned int W_dstE, unsigned int W_valE){
     int dstM = getDstM();
     unsigned int srcA = getSrcA();
     unsigned int srcB = getSrcB();
-    int valA = 0;
-    int valB = 0;
+    int valA = selectFwdA(srcA, W_dstE, W_valE);
+    int valB = forwardB(srcB, W_dstE, W_valE);
     updateEregister(D.stat, D.icode, D.ifun, D.valC, valA, valB, dstE,
                     dstM, srcA, srcB);
 }

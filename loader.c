@@ -38,7 +38,7 @@ bool load() {
         if (result >= 0) lineNum++; // count good lines and comments
         if (result == 0) continue;  // dont bother with comment lines 
         if (result < 0) {
-            printf("Error on line %d\n%s\n\n", lineNum, line);
+            printf("Error on line %d\n%s\n", lineNum, line);
             return FALSE;           // found an error, stop parsing
         } else {
             storeData(line);     // good line, store it
