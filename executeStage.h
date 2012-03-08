@@ -16,11 +16,14 @@ typedef struct {
 eregister getEregister();
 
 void executeStage();
+int performOpl();
+int performIrmovl();
+int doNothing();
+int dump();
+void updateCC(int val);
 void clearEregister();
 void updateEregister(int stat, int icode, int ifun, int valC, int valA,
                      int valB, int dstE, int dstM, int srcA, int srcB);
 void initializeFuncPtrArray();
-int doNothing();
-int dump();
 void printEregister();
 #endif

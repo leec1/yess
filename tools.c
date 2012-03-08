@@ -10,7 +10,7 @@
  */
 
 void clearBuffer(char *reg, unsigned int size) {
-    int i;
+    unsigned int i;
     for (i=0; i<size; i++) {
         reg[i] = 0;
     }

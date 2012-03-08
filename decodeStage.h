@@ -15,12 +15,12 @@ dregister getDregister();
 
 void decodeStage(unsigned int W_dstE, unsigned int W_valE);
 
-int getSrcA();
-int getSrcB();
+unsigned int getSrcA();
+unsigned int getSrcB();
 int getDstE();
 int getDstM();
-int selectFwdA();
-int forwardB();
+int selectFwdA(unsigned int d_srcA, unsigned int W_dstE, unsigned int W_valE);
+int forwardB(unsigned int d_srcB, unsigned int W_dstE, unsigned int W_valE);
 
 void clearDregister();
 void updateDregister(int stat, int icode, int ifun, int rA, int rB,

@@ -8,24 +8,24 @@
 static dregister D;
 
 void decodeStage(unsigned int W_dstE, unsigned int W_valE){
+    int dstE = getDstE();
+    int dstM = getDstM();
+    unsigned int srcA = getSrcA();
+    unsigned int srcB = getSrcB();
     int valA = 0;
     int valB = 0;
-    int dstE = 0xf;
-    int dstM = 0xf;
-    int srcA = 0xf;
-    int srcB = 0xf;
     updateEregister(D.stat, D.icode, D.ifun, D.valC, valA, valB, dstE,
                     dstM, srcA, srcB);
 }
 
-int getSrcA() {
+unsigned int getSrcA() {
     if (D.icode == CMOV || D.icode == RMMOVL ||
         D.icode == OPL || D.icode == PUSHL)
         return D.rA;
     return ESP;
 }
 
-int getSrcB() {
+unsigned int getSrcB() {
     if (D.icode == OPL || D.icode == RMMOVL || D.icode == MRMOVL)
         return D.rB;
     else if (D.icode == PUSHL || D.icode == POPL ||
@@ -49,12 +49,17 @@ int getDstM() {
     return RNONE;
 }
 
-int selectFwdA() {
-    return 0;
+int selectFwdA(unsigned int d_srcA, unsigned int W_dstE, unsigned int W_valE) {
+    if(d_srcA == RNONE) return 0;
+    //if(D.icode == CALL || D.icode == JXX) return D.valP;
+    if(d_srcA == W_dstE) return W_valE; 
+    return getRegister(d_srcA);
 }
 
-int forwardB() {
-    return 0;
+int forwardB(unsigned int d_srcB, unsigned int W_dstE, unsigned int W_valE) {
+    if(d_srcB == RNONE) return 0;
+    if(d_srcB == W_dstE) return W_valE;
+    return getRegister(d_srcB);
 }
 
 /* getDregister

@@ -19,12 +19,21 @@ typedef int bool;
 #define POPL 0xb
 #define DUMP 0xc
 
-//Stat Codes- Valid?
+//Stat Codes
 #define RNONE 0xf
 
 #define SAOK 1
 #define SHLT 2
 #define SADR 3 
 #define SINS 4
+
+//Function Codes
+
+//Operations
+
+#define ADD 0
+#define SUB 1
+#define AND 2
+#define XOR 3
 
 #endif
