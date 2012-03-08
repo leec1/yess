@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include "types.h"
+#include "tools.h"
+#include "memory.h"
 #include "loader.h"
 
 static FILE *file;
@@ -37,11 +39,12 @@ bool load() {
     lineNum = 1;
     do {
         fscanf(file, "%[^\n]", line); //handy dandy "read until \n"
+        printf("%s\n", line);
         int result = testLine(line);
         if (result >= 0) lineNum++; // count good lines and comments
         if (result == 0) continue;  // dont bother with comment lines 
         if (result < 0) {
-            printf("Error on line %d\n%s\n", lineNum, line);
+            printf("Error on line %d\n%s\n\n", lineNum, line);
             return FALSE;           // found an error, stop parsing
         } else {
             //getData(line);
@@ -75,7 +78,7 @@ int testLine(char *line) {
     }
 
     int numBits = strcspn(&line[9], " "); // cant have a nibble instruction
-    if (numBits & 1 != 0) return LINE_ERROR; // remember, X%2 == X&1
+    if ((numBits & 1) != 0) return LINE_ERROR; // remember, X%2 == X&1
 
     addr = getAddress(line); // cant go backwards in addressing (?)
     if (addr < prevAddr) return LINE_ERROR;

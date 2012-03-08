@@ -4,7 +4,7 @@
 # Partner: Caleb Lee
 
 CC 		= gcc
-CFLAGS  = -O3
+CFLAGS  = -g -Wall
 LD 		= $(CC)
 LDFLAGS =
 RM		= rm
