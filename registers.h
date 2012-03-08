@@ -11,8 +11,15 @@
 #define EDI    0x7
 #define REGSIZE 8    //number of registers
 
+#define OF 0
+#define SF 1
+#define ZF 2
+
 unsigned int getRegister(int regNum);
 void setRegister(int regNum, unsigned int regValue);
 void clearRegisters();
+unsigned int getCC(unsigned int bitNum);
+void setCC(unsigned int bitNum, unsigned int bitValue);
+void initializeCC();
 #endif
 

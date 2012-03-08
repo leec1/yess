@@ -6,7 +6,7 @@
 
 static dregister D;
 
-void decodeStage(){
+void decodeStage(unsigned int W_dstE, unsigned int W_valE){
     int valA = 0;
     int valB = 0;
     int dstE = 0xf;

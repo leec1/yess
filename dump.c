@@ -134,14 +134,15 @@ void dumpProgramRegisters()
 // Params: none
 // Returns: none
 // Modifies: none
-void dumpProcessorRegisters()
-{
+void dumpProcessorRegisters() {
+
     fregister F = getFregister();
     dregister D = getDregister();
     eregister E = getEregister();
     mregister M = getMregister();
     wregister W = getWregister();
-   
+
+    printf("CC - ZF: %01x SF: %01x OF: %01x\n", getCC(ZF), getCC(SF), getCC(OF)); 
     printf("F - predPC: %08x\n", F.predPC);
     printf("D - stat: %01x icode: %01x ifun: %01x rA: %01x rB: %01x valC: %08x  valP: %08x\n",
             D.stat, D.icode, D.ifun, D.rA, D.rB, D.valC, D.valP);

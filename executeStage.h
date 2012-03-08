@@ -13,17 +13,14 @@ typedef struct {
     unsigned int srcB;
 } eregister;
 
-void executeStage();
 eregister getEregister();
-void clearEregister();
 
+void executeStage();
+void clearEregister();
 void updateEregister(int stat, int icode, int ifun, int valC, int valA,
                      int valB, int dstE, int dstM, int srcA, int srcB);
-
 void initializeFuncPtrArray();
-
 int doNothing();
 int dump();
-
 void printEregister();
 #endif

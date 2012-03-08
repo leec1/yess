@@ -10,14 +10,12 @@ typedef struct {
     unsigned int valP;
 } dregister;
 
-void decodeStage();
 
 dregister getDregister();
 
+void decodeStage(unsigned int W_dstE, unsigned int W_valE);
 void clearDregister();
-
 void updateDregister(int stat, int icode, int ifun, int rA, int rB,
-        int valC, int valP);
-
+    int valC, int valP);
 void printDregister();
 #endif

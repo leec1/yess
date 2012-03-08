@@ -16,6 +16,9 @@
 int clockCount;
 bool stop;
 
+unsigned int W_valE;
+unsigned int W_dstE;
+
 void initialize();
 
 int main(int argc, char * argv[]) {
@@ -46,11 +49,11 @@ int main(int argc, char * argv[]) {
         printEregister();
         printMregister();
         printWregister();*/
-        stop = writebackStage();
-        //printf("clock: %d\tstop?: %d\n", clockCount, stop);
+
+        stop = writebackStage(&W_dstE, &W_valE);
         memoryStage();
         executeStage();
-        decodeStage();
+        decodeStage(W_dstE, W_valE);
         fetchStage();
         clockCount++;
     }
@@ -66,6 +69,7 @@ int main(int argc, char * argv[]) {
 
 void initialize() {
     initializeFuncPtrArray();
+    initializeCC();
     clearMemory();
     clearRegisters();
     clearFregister();

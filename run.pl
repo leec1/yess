@@ -1,13 +1,15 @@
 #!/usr/bin/perl
 
 #names of the input files
-@canfiles = ("lab5a", "lab5b", "error1", "error2",  
+@canfiles = ("lab5a", "lab5b", "lab6a", "lab6b", "lab6c",
+             "lab6d", "lab6e", "lab6f", "error1", "error2",
              "error3", "error4", "error5", "error6",
              "error7", "error8", "error9");
 
+
 #subdirectory in which the output will be placed
 $dir = "Tests/";
-$canDir = "/u/css/classes/3481/111/lab5/";
+$canDir = "/u/css/classes/3481/104/lab6/";
 
 if (! -e $dir)
 {
@@ -43,7 +45,6 @@ for ($i = 0; $i <= $#canfiles; $i++){
    
       #if there are differences, keep the problem and ourdump files
       if (! system "test -s $studentproblems"){
-         #print "problems found in $canfiles[$i], keeping all temp files.\n";
          print "Failed.\n";
       } else {
          print "Passed.\n";

@@ -1,6 +1,7 @@
 #include "registers.h"
 
 static unsigned int registers[REGSIZE];
+static unsigned int CC;
 
 /* getRegister
  *      Returns the value of the specified register.
@@ -39,4 +40,18 @@ void clearRegisters() {
     for (i=0; i<REGSIZE; i++) {
         registers[i] = 0;
     }
+}
+
+void setCC(unsigned int bitNum, unsigned int bitValue){
+    assignOneBit(bitNum, bitValue, CC);
+}
+
+unsigned int getCC(unsigned int bitNum){
+    return getBits(bitNum, bitNum, CC);
+}
+
+void initializeCC(){
+    assignOneBit(OF, 0, CC);
+    assignOneBit(ZF, 0, CC);
+    assignOneBit(SF, 0, CC);
 }

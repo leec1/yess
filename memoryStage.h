@@ -10,11 +10,10 @@ typedef struct {
     unsigned int dstM; 
 } mregister;
 
-void memoryStage();
 mregister getMregister();
+
+void memoryStage();
 void clearMregister();
-
-
 void updateMregister(int stat, int icode, int Cnd, int valE, int valA,
                      int dstE, int dstM);
 void printMregister();

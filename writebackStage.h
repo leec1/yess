@@ -9,10 +9,10 @@ typedef struct {
     unsigned int dstM;
 } wregister;
 
-bool writebackStage();
 wregister getWregister();
-void clearWregister();
 
+bool writebackStage(unsigned int *W_dstE, unsigned int *W_valE);
+void clearWregister();
 void updateWregister(int stat, int icode, int valE, int valM,
                      int dstE, int dstM);
 void printWregister();

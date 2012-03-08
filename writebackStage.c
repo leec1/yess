@@ -6,7 +6,7 @@
 
 static wregister W;
 
-bool writebackStage(){
+bool writebackStage(unsigned int *W_dstE, unsigned int *W_valE){
     //int memError = FALSE;
     //if (W.stat != SAOK) return TRUE; // unless stat is A-OK, we should stop.
     if (W.icode == DUMP) {

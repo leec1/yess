@@ -24,6 +24,11 @@ void fetchStage() {
     int rB = RNONE;
     int valC = 0;
     int valP = 0;
+
+    if (instructionNeedsRegByte(icode)) {
+        rA = getBits(8, 11, inst);
+        rB = getBits(12, 15, inst);
+    }
     
     switch (icode) {
         case HALT:
@@ -71,6 +76,12 @@ void fetchStage() {
     valP = F.predPC;
 
     updateDregister(stat, icode, ifun, rA, rB, valC, valP); 
+}
+
+bool instructionNeedsRegByte(int icode) {
+    return (icode == CMOV) || (icode == OPL)    || (icode == PUSHL)  ||
+           (icode == POPL) || (icode == IRMOVL) || (icode == RMMOVL) ||
+           (icode == MRMOVL);
 }
 
 /* getFregister
