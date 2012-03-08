@@ -14,6 +14,14 @@ typedef struct {
 dregister getDregister();
 
 void decodeStage(unsigned int W_dstE, unsigned int W_valE);
+
+int getSrcA();
+int getSrcB();
+int getDstE();
+int getDstM();
+int selectFwdA();
+int forwardB();
+
 void clearDregister();
 void updateDregister(int stat, int icode, int ifun, int rA, int rB,
     int valC, int valP);

@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include "types.h"
 #include "tools.h"
+#include "registers.h"
 #include "executeStage.h"
 #include "decodeStage.h"
 
@@ -15,6 +16,45 @@ void decodeStage(unsigned int W_dstE, unsigned int W_valE){
     int srcB = 0xf;
     updateEregister(D.stat, D.icode, D.ifun, D.valC, valA, valB, dstE,
                     dstM, srcA, srcB);
+}
+
+int getSrcA() {
+    if (D.icode == CMOV || D.icode == RMMOVL ||
+        D.icode == OPL || D.icode == PUSHL)
+        return D.rA;
+    return ESP;
+}
+
+int getSrcB() {
+    if (D.icode == OPL || D.icode == RMMOVL || D.icode == MRMOVL)
+        return D.rB;
+    else if (D.icode == PUSHL || D.icode == POPL ||
+             D.icode == CALL  || D.icode == RET)
+        return ESP;
+    return RNONE;
+}
+
+int getDstE() {
+    if (D.icode == CMOV || D.icode == IRMOVL || D.icode == OPL)
+        return D.rB;
+    else if (D.icode == PUSHL || D.icode == POPL ||
+             D.icode == CALL  || D.icode == RET)
+        return ESP;
+    return RNONE;
+}
+
+int getDstM() {
+    if (D.icode == MRMOVL || D.icode == POPL)
+        return D.rA;
+    return RNONE;
+}
+
+int selectFwdA() {
+    return 0;
+}
+
+int forwardB() {
+    return 0;
 }
 
 /* getDregister
