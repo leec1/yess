@@ -50,7 +50,7 @@ unsigned int getCC(unsigned int bitNum){
     return getBits(bitNum, bitNum, CC);
 }
 
-void initializeCC(){
+void initializeCC() {
     assignOneBit(OF, 0, CC);
     assignOneBit(ZF, 0, CC);
     assignOneBit(SF, 0, CC);

@@ -23,6 +23,7 @@ int performOpl() {
     switch (E.ifun) {
         case ADD:
             val = E.valB + E.valA;
+            
             if (isNegative(E.valB) && isNegative(E.valA) && !isNegative(val) ||
                 !isNegative(E.valB) && !isNegative(E.valA) && isNegative(val))
                 setCC(OF, 1);
