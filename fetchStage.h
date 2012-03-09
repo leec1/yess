@@ -4,10 +4,11 @@ typedef struct {
     unsigned int predPC;
 } fregister;
 
-void fetchStage();
 fregister getFregister();
+
+void fetchStage();
 bool instructionNeedsRegByte(int icode);
+int need_valC(int icode);
 void clearFregister();
 void printFregister();
-
 #endif

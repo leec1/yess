@@ -14,10 +14,8 @@ void fetchStage() {
     unsigned int f_pc = selectPC(F.predPC);
 
     unsigned char inst = getByte(f_pc, &memError);
-    //printf(">> INSTRUCTION: %x\n", inst);
     
-    //int stat = memError ? SADR : SAOK;
-    int stat = SAOK;
+    int stat = memError ? SADR : SAOK;
     int ifun = getBits(0, 3, inst);
     int icode = getBits(4, 7, inst);
     int rA = RNONE;
@@ -26,8 +24,17 @@ void fetchStage() {
     int valP = 0;
 
     if (instructionNeedsRegByte(icode)) {
-        rA = getBits(8, 11, inst);
-        rB = getBits(12, 15, inst);
+        int regs = getByte(f_pc+1, &memError);
+        rB = getBits(0, 3, regs);
+        rA = getBits(4, 7, regs);
+    }
+    int off;
+    if (off = need_valC(icode)) {
+        unsigned char byte0 = getByte(f_pc+off, &memError);
+        unsigned char byte1 = getByte(f_pc+off+1, &memError);
+        unsigned char byte2 = getByte(f_pc+off+2, &memError);
+        unsigned char byte3 = getByte(f_pc+off+3, &memError);
+        valC = buildWord(byte0, byte1, byte2, byte3);
     }
     
     switch (icode) {
@@ -62,12 +69,6 @@ void fetchStage() {
             break;
         case DUMP:
             F.predPC = F.predPC + 5;
-            unsigned char byte0 = getByte(f_pc+1, &memError);
-            unsigned char byte1 = getByte(f_pc+2, &memError);
-            unsigned char byte2 = getByte(f_pc+3, &memError);
-            unsigned char byte3 = getByte(f_pc+4, &memError);
-            //printf(">>>>>>> bytes = %x\t%x\t%x\t%x\n", byte0, byte1, byte2, byte3);
-            valC = buildWord(byte0, byte1, byte2, byte3);
             break;
         default:
             F.predPC = F.predPC + 1; 
@@ -84,6 +85,12 @@ bool instructionNeedsRegByte(int icode) {
     return (icode == CMOV) || (icode == OPL)    || (icode == PUSHL)  ||
            (icode == POPL) || (icode == IRMOVL) || (icode == RMMOVL) ||
            (icode == MRMOVL);
+}
+
+int need_valC(int icode) {
+    if ((icode == JXX) || (icode == CALL) || (icode == DUMP)) return 1;
+    if ((icode == IRMOVL) || (icode == RMMOVL) || (icode == MRMOVL)) return 2;
+    return 0;
 }
 
 /* getFregister
