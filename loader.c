@@ -26,6 +26,14 @@ bool openFile(char *filename) {
     return (file = fopen(filename, "r")) != NULL;
 }
 
+/* load
+ *      Reads the opened file, checks it for errors and stores it if none
+ *      are found. If no file is opened, returns false.
+ * Params:   none
+ * Returns:  bool - true if the file was read and stored succesfully
+ * Modifies: lineNum, memory in memory.c
+ *
+ */
 bool load() {
     if (file == NULL) return FALSE;
     char line[128];                 // storage for line data
@@ -47,34 +55,6 @@ bool load() {
     fclose(file);                   // because we aren't barbarians
     return TRUE;
 }
-/* load
- *      Reads the opened file, checks it for errors and stores it if none
- *      are found. If no file is opened, returns false.
- * Params:   none
- * Returns:  bool - true if the file was read and stored succesfully
- * Modifies: lineNum, memory in memory.c
- *
-bool load() {
-    if (file == NULL) return FALSE;
-    char line[128];                 // storage for line data
-    lineNum = 1;
-    do {
-        fscanf(file, "%[^\n]", line); //handy dandy "read until \n"
-        printf("%s\n", line);
-        int result = testLine(line);
-        if (result >= 0) lineNum++; // count good lines and comments
-        if (result == 0) continue;  // dont bother with comment lines 
-        if (result < 0) {
-            printf("Error on line %d\n%s\n\n", lineNum, line);
-            return FALSE;           // found an error, stop parsing
-        } else {
-            //getData(line);
-            storeData(line);     // good line, store it
-        }
-    } while (fgetc(file) != EOF);   // tests AND takes care of trailing \n
-    fclose(file);                   // because we aren't barbarians
-    return TRUE;
-}*/
 
 /* testLine
  *      Tests a single line in an input file for .yo format correctness.

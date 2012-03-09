@@ -43,7 +43,7 @@ void clearRegisters() {
 }
 
 void setCC(unsigned int bitNum, unsigned int bitValue){
-    assignOneBit(bitNum, bitValue, CC);
+    CC=assignOneBit(bitNum, bitValue, CC);
 }
 
 unsigned int getCC(unsigned int bitNum){
