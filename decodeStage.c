@@ -7,6 +7,13 @@
 
 static dregister D;
 
+/* decodeStage
+ *      Handles the main combinational logic of the decode stage.
+ * Params:   uint W_dstE - 
+ *           uint W_valE -
+ * Returns:  none
+ * Modifies: none?
+ */
 void decodeStage(unsigned int W_dstE, unsigned int W_valE){
     int dstE = getDstE();
     int dstM = getDstM();
@@ -18,6 +25,12 @@ void decodeStage(unsigned int W_dstE, unsigned int W_valE){
                     dstM, srcA, srcB);
 }
 
+/* getSrcA
+ *      Helper for deciding which register to use as src A.
+ * Params:   none
+ * Returns:  uint - the register to use as src A
+ * Modifies: none
+ */
 unsigned int getSrcA() {
     if (D.icode == CMOV || D.icode == RMMOVL ||
         D.icode == OPL || D.icode == PUSHL)
@@ -27,6 +40,12 @@ unsigned int getSrcA() {
     return RNONE;
 }
 
+/* getSrcB
+ *      Helper for deciding which register to use as src B.
+ * Params:   none
+ * Returns:  uint - the register to use as src B
+ * Modifies: none
+ */
 unsigned int getSrcB() {
     if (D.icode == OPL || D.icode == RMMOVL || D.icode == MRMOVL)
         return D.rB;
@@ -36,6 +55,12 @@ unsigned int getSrcB() {
     return RNONE;
 }
 
+/* getDstE
+ *      Helper for deciding which register to use as dst E.
+ * Params:   none
+ * Returns:  int - the register to use as dst E
+ * Modifies: none
+ */
 int getDstE() {
     if (D.icode == CMOV || D.icode == IRMOVL || D.icode == OPL)
         return D.rB;
@@ -45,12 +70,26 @@ int getDstE() {
     return RNONE;
 }
 
+/* getDstM
+ *      Helper for deciding which register to use as dst M
+ * Params:   none
+ * Returns:  int - the register to use as dst M
+ * Modifies: none
+ */
 int getDstM() {
     if (D.icode == MRMOVL || D.icode == POPL)
         return D.rA;
     return RNONE;
 }
 
+/* selectFwdA
+ *      Helper to decide if we need to forward data through the pipeline.
+ * Params:   uint d_srcA -
+ *           uint W_dstE -
+ *           uint W_valE -
+ * Returns:  int - the value to forward
+ * Modifies: none
+ */
 int selectFwdA(unsigned int d_srcA, unsigned int W_dstE, unsigned int W_valE) {
     if(d_srcA == RNONE) return 0;
     //if(D.icode == CALL || D.icode == JXX) return D.valP;
@@ -58,6 +97,14 @@ int selectFwdA(unsigned int d_srcA, unsigned int W_dstE, unsigned int W_valE) {
     return getRegister(d_srcA);
 }
 
+/* selectFwdA
+ *      Helper to decide if we need to forward data through the pipeline.
+ * Params:   uint d_srcA -
+ *           uint W_dstE -
+ *           uint W_valE -
+ * Returns:  int - the value to forward
+ * Modifies: none
+ */
 int forwardB(unsigned int d_srcB, unsigned int W_dstE, unsigned int W_valE) {
     if(d_srcB == RNONE) return 0;
     if(d_srcB == W_dstE) return W_valE;
