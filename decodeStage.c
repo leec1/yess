@@ -91,9 +91,9 @@ int getDstM() {
  * Modifies: none
  */
 int selectFwdA(unsigned int d_srcA, unsigned int W_dstE, unsigned int W_valE) {
-    if(d_srcA == RNONE) return 0;
-    //if(D.icode == CALL || D.icode == JXX) return D.valP;
-    if(d_srcA == W_dstE) return W_valE; 
+    if (d_srcA == RNONE) return 0;
+    if (D.icode == CALL || D.icode == JXX) return D.valP;
+    if (d_srcA == W_dstE) return W_valE; 
     return getRegister(d_srcA);
 }
 
@@ -106,8 +106,8 @@ int selectFwdA(unsigned int d_srcA, unsigned int W_dstE, unsigned int W_valE) {
  * Modifies: none
  */
 int forwardB(unsigned int d_srcB, unsigned int W_dstE, unsigned int W_valE) {
-    if(d_srcB == RNONE) return 0;
-    if(d_srcB == W_dstE) return W_valE;
+    if (d_srcB == RNONE) return 0;
+    if (d_srcB == W_dstE) return W_valE;
     return getRegister(d_srcB);
 }
 

@@ -46,13 +46,16 @@ void fetchStage() {
             F.predPC = F.predPC + 1;
             break;
         case CMOV:
+            F.predPC = F.predPC + 2;
             break;
         case IRMOVL:
             F.predPC = F.predPC + 6;
             break;
         case RMMOVL:
+            F.predPC = F.predPC + 6;
             break;
         case MRMOVL:
+            F.predPC = F.predPC + 6;
             break;
         case OPL:
             F.predPC = F.predPC + 2;

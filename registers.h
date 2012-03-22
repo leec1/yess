@@ -1,6 +1,8 @@
 #ifndef REGISTERS_H
 #define REGISTERS_H
 
+#define REGSIZE 8
+
 #define EAX    0x0
 #define ECX    0x1
 #define EDX    0x2
@@ -9,7 +11,6 @@
 #define EBP    0x5
 #define ESI    0x6
 #define EDI    0x7
-#define REGSIZE 8    //number of registers
 
 #define OF 0
 #define SF 1

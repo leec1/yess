@@ -13,16 +13,11 @@ bool writebackStage(unsigned int *W_dstE, unsigned int *W_valE){
     
     setRegister(W.dstE, W.valE);
     setRegister(W.dstM, W.valM);
+    //if (W.dstE == EAX || W.dstM == EAX) 
+        //printf("writing to EAX... W.valE= %x\tW.valM= %x\n", W.valE, W.valM);
 
-    //int memError = FALSE;
-    //if (W.stat != SAOK) return TRUE; // unless stat is A-OK, we should stop.
     if (W.icode == DUMP) {
-        //printf("W.valE = %x\n", W.valE);
-        //unsigned char flagByte = getByteNumber(0, W.valE);
         unsigned char flagByte = W.valE;
-        //int flags = getBits(5, 8, flagByte);
-        //printf("flagbyte = %x\n", flagByte);
-        //printf("flags: %x\t( %x & 0x1 )\n", flags, flags);
         if ((flagByte & 0x1) == 0x1)
             dumpProgramRegisters();
         if ((flagByte & 0x2) == 0x2)

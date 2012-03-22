@@ -13,6 +13,8 @@ typedef struct {
 mregister getMregister();
 
 void memoryStage();
+void memoryControl(bool *readC, bool *writeC);
+int memoryAddr();
 void clearMregister();
 void updateMregister(int stat, int icode, int Cnd, int valE, int valA,
                      int dstE, int dstM);

@@ -7,11 +7,15 @@
 
 static eregister E;
 int (*funcArr[16])();
+unsigned int Cnd;
 
 void executeStage() {
-    int Cnd = 0x0;
+    Cnd = FALSE;
     int valE = (*funcArr[E.icode])();
-    updateMregister(E.stat, E.icode, Cnd, valE, E.valA, E.dstE, E.dstM);
+    int dstE = E.dstE;
+    if (E.icode == CMOV && !Cnd)
+        dstE = RNONE;
+    updateMregister(E.stat, E.icode, Cnd, valE, E.valA, dstE, E.dstM);
 }
 
 int doNothing() {
@@ -51,8 +55,47 @@ int performOpl() {
     return val;
 }
 
+int performRrmovl() {
+    switch (E.ifun) {
+        case RRMOVL:
+            Cnd = TRUE;
+            break;
+        case CMOVLE:
+            Cnd = (getCC(SF) && !getCC(OF)) || (!getCC(SF) && getCC(OF)) || getCC(ZF);
+            break;
+        case CMOVL:
+            Cnd = (getCC(SF) && !getCC(OF)) || (!getCC(SF) && getCC(OF));
+            break;
+        case CMOVE:
+            Cnd = getCC(ZF);
+            break;
+        case CMOVNE:
+            Cnd = !getCC(ZF);
+            break;
+        case CMOVGE:
+            Cnd = (getCC(SF) && getCC(OF)) || (!getCC(SF) && !getCC(OF));
+            break;
+        case CMOVG:
+            Cnd = (getCC(SF)  && getCC(OF)  && !getCC(ZF)) ||
+                  (!getCC(SF) && !getCC(OF) && !getCC(ZF));
+            break;
+        default:
+            Cnd = FALSE;
+            break;
+    }
+    return E.valA;
+}
+
 int performIrmovl() {
     return E.valC;
+}
+
+int performRmmovl() {
+    return E.valC + E.valB;
+}
+
+int performMrmovl() {
+    return E.valC + E.valB;
 }
 
 int dump() {
@@ -93,7 +136,7 @@ void clearEregister() {
 }
 
 void updateEregister(int stat, int icode, int ifun, int valC, int valA,
-                     int valB, int dstE, int dstM, int srcA, int srcB){
+                     int valB, int dstE, int dstM, int srcA, int srcB) {
     E.stat = stat;
     E.icode = icode;
     E.ifun = ifun;
@@ -106,13 +149,13 @@ void updateEregister(int stat, int icode, int ifun, int valC, int valA,
     E.srcB = srcB;
 }
 
-void initializeFuncPtrArray(){
+void initializeFuncPtrArray() {
     funcArr[HALT] = &doNothing;
     funcArr[NOP] = &doNothing;
-    funcArr[CMOV] = &doNothing;
+    funcArr[CMOV] = &performRrmovl;
     funcArr[IRMOVL] = &performIrmovl;
-    funcArr[RMMOVL] = &doNothing;
-    funcArr[MRMOVL] = &doNothing;
+    funcArr[RMMOVL] = &performRmmovl;
+    funcArr[MRMOVL] = &performMrmovl;
     funcArr[OPL] = &performOpl;
     funcArr[JXX] = &doNothing;
     funcArr[CALL] = &doNothing;
