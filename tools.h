@@ -10,6 +10,6 @@ unsigned int getBits(int low, int high, unsigned int source);
 unsigned int setBits(int low, int high, unsigned int source);
 unsigned int clearBits(int low, int high, unsigned int source);
 unsigned int assignOneBit(int bitNumber, int bitValue, unsigned int source);
-bool isNegative(unsigned int source);
 void printBits(unsigned int source);
+bool isNeg(unsigned int source);
 #endif

@@ -2,6 +2,7 @@
 #include "types.h"
 #include "tools.h"
 #include "dump.h"
+#include "registers.h"
 #include "writebackStage.h"
 
 static wregister W;
@@ -48,7 +49,7 @@ wregister getWregister() {
  *      Clears the contents of the W register.
  * Params:   none
  * Returns:  void
- * Modifies: W
+ * Modifies: wregister W
  */
 void clearWregister() {
     clearBuffer((char *) &W, sizeof(W));

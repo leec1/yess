@@ -39,17 +39,9 @@ int main(int argc, char * argv[]) {
         return 0;
     }
     
-    //initializeFuncPtrArray();
-     
     clockCount = 0;
     stop = FALSE;
     while(!stop) {
-        /*printFregister();
-        printDregister();
-        printEregister();
-        printMregister();
-        printWregister();*/
-
         stop = writebackStage(&W_dstE, &W_valE);
         memoryStage();
         executeStage();

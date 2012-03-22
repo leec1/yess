@@ -11,7 +11,7 @@ static dregister D;
  *      Handles the main combinational logic of the decode stage.
  * Params:   uint W_dstE - 
  *           uint W_valE -
- * Returns:  none
+ * Returns:  void
  * Modifies: none?
  */
 void decodeStage(unsigned int W_dstE, unsigned int W_valE){
@@ -121,7 +121,7 @@ dregister getDregister() {
     return D;
 }
 
-/* chearDregister
+/* clearDregister
  *      Clears the contents of the D register.
  * Params:   none 
  * Returns:  void
@@ -131,8 +131,20 @@ void clearDregister() {
     clearBuffer((char *) &D, sizeof(D));
 }
 
-void updateDregister(int stat, int icode, int ifun, int rA, int rB, 
-        int valC, int valP){
+/* updateDregister
+ *      Sets the values in the Decode PIPE register to the specified values.
+ * Params:   int stat - 
+ *           int icode -
+ *           int ifun -
+ *           int rA -
+ *           int rB -
+ *           int valC - 
+ *           int valP -
+ * Returns:  void
+ * Modifies: dregister D
+ */
+void updateDregister(int stat, int icode, int ifun, int rA, int rB, int valC,
+    int valP) {
     D.stat = stat;
     D.icode = icode;
     D.ifun = ifun;

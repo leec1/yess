@@ -8,7 +8,7 @@
 static eregister E;
 int (*funcArr[16])();
 
-void executeStage(){
+void executeStage() {
     int Cnd = 0x0;
     int valE = (*funcArr[E.icode])();
     updateMregister(E.stat, E.icode, Cnd, valE, E.valA, E.dstE, E.dstM);
@@ -23,16 +23,15 @@ int performOpl() {
     switch (E.ifun) {
         case ADD:
             val = E.valB + E.valA;
-            
-            if (isNegative(E.valB) && isNegative(E.valA) && !isNegative(val) ||
-                !isNegative(E.valB) && !isNegative(E.valA) && isNegative(val))
+            if ((isNeg(E.valB) && isNeg(E.valA) && !isNeg(val))  ||
+                (!isNeg(E.valB) && !isNeg(E.valA) && isNeg(val)))
                 setCC(OF, 1);
             else setCC(OF, 0);
             break;
         case SUB:
             val = E.valB - E.valA;
-            if (isNegative(E.valB) && !isNegative(E.valA) && !isNegative(val) ||
-                !isNegative(E.valB) && isNegative(E.valA) && isNegative(val))
+            if ((isNeg(E.valB) && !isNeg(E.valA) && !isNeg(val)) ||
+                (!isNeg(E.valB) && isNeg(E.valA) && isNeg(val)))
                 setCC(OF, 1);
             else setCC(OF, 0);
             break;
@@ -56,7 +55,7 @@ int performIrmovl() {
     return E.valC;
 }
 
-int dump(){
+int dump() {
     return E.valC;
 }
 
@@ -64,7 +63,7 @@ void updateCC(int val) {
     if (val == 0) {
         setCC(ZF, 1);
         setCC(SF, 0);
-    } else if (isNegative(val)) {
+    } else if (isNeg(val)) {
         setCC(ZF, 0);
         setCC(SF, 1);
     } else {
@@ -87,12 +86,11 @@ eregister getEregister() {
  *      Clears the contents of the E register.
  * Params:   none
  * Returns:  void
- * Modifies: E
+ * Modifies: eregister E
  */
 void clearEregister() {
     clearBuffer((char *) &E, sizeof(E));
 }
-
 
 void updateEregister(int stat, int icode, int ifun, int valC, int valA,
                      int valB, int dstE, int dstM, int srcA, int srcB){
@@ -106,13 +104,6 @@ void updateEregister(int stat, int icode, int ifun, int valC, int valA,
     E.dstM = dstM;
     E.srcA = srcA;
     E.srcB = srcB;
-}
-
-void printEregister() {
-    printf("\n=== Execute Stage ===\n");
-    printf("stat = %d\ticode = %x\tifun = %x\n", E.stat, E.icode, E.ifun);
-    printf("valC = %x\tvalA = %x\tvalB = %x\n", E.valC, E.valA, E.valB);
-    printf("dstE = %x\tdstM = %x\tsrcA = %x\tsrcB = %x\n", E.dstE, E.dstM, E.srcA, E.srcB);
 }
 
 void initializeFuncPtrArray(){
@@ -130,3 +121,11 @@ void initializeFuncPtrArray(){
     funcArr[POPL] = &doNothing;
     funcArr[DUMP] = &dump;
 }
+
+void printEregister() {
+    printf("\n=== Execute Stage ===\n");
+    printf("stat = %d\ticode = %x\tifun = %x\n", E.stat, E.icode, E.ifun);
+    printf("valC = %x\tvalA = %x\tvalB = %x\n", E.valC, E.valA, E.valB);
+    printf("dstE = %x\tdstM = %x\tsrcA = %x\tsrcB = %x\n", E.dstE, E.dstM, E.srcA, E.srcB);
+}
+

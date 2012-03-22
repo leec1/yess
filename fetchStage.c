@@ -29,7 +29,7 @@ void fetchStage() {
         rA = getBits(4, 7, regs);
     }
     int off;
-    if (off = need_valC(icode)) {
+    if ((off = need_valC(icode))) {
         unsigned char byte0 = getByte(f_pc+off, &memError);
         unsigned char byte1 = getByte(f_pc+off+1, &memError);
         unsigned char byte2 = getByte(f_pc+off+2, &memError);
@@ -106,8 +106,8 @@ fregister getFregister() {
 /* clearFregister
  *      Clears the contents of the F register.
  * Params:   none
- * Returns:  none
- * Modifies: F 
+ * Returns:  void
+ * Modifies: fregister F
  */
 void clearFregister() {
     clearBuffer((char *) &F, sizeof(F));

@@ -13,7 +13,7 @@ void memoryStage() {
 /* getMregister
  *      Returns a copy of the M register.
  * Params:   none
- * Returns:  eregister
+ * Returns:  mregister
  * Modfiies: none
  */
 mregister getMregister() {
@@ -24,7 +24,7 @@ mregister getMregister() {
  *      Clears the contents of the M register.
  * Params:   none
  * Returns:  void
- * Modifies: M
+ * Modifies: mregister M
  */
 void clearMregister() {
     clearBuffer((char *) &M, sizeof(M));

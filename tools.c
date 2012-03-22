@@ -146,6 +146,6 @@ unsigned int buildWord(unsigned char byte0, unsigned char byte1,
  * Returns:  bool (true || false), true if source is negative, false otherwise
  * Modifies: none
  */
-bool isNegative(unsigned int source) {
+bool isNeg(unsigned int source) {
     return getBits(31,31,source) == 1;
 }

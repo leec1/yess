@@ -1,3 +1,5 @@
+#include "types.h"
+#include "tools.h"
 #include "registers.h"
 
 static unsigned int registers[REGSIZE];
