@@ -2,8 +2,6 @@
 #include "tools.h"
 #include "memory.h"
 
-// Array memory holds the contents of the phsyical memory.
-// It is only accessible from this file. (static)
 static unsigned int memory[MEMSIZE];
 
 unsigned int fetch(int address, bool *memError);

@@ -7,8 +7,14 @@
 
 static eregister E;
 int (*funcArr[16])();
-unsigned int Cnd;
+bool Cnd;
 
+/* executeStage
+ *      Handles the main combination logic of the execute stage.
+ * Params:   none
+ * Returns:  void
+ * Modifies: Cnd
+ */
 void executeStage() {
     Cnd = FALSE;
     int valE = (*funcArr[E.icode])();
@@ -18,10 +24,19 @@ void executeStage() {
     updateMregister(E.stat, E.icode, Cnd, valE, E.valA, dstE, E.dstM);
 }
 
+//placeholder function for the function pointer array
 int doNothing() {
     return 0;
 }
 
+/* performOpl
+ *      Simulates the OPL instruction. Checks E.ifun and performs the correct
+ *      operation based on the icode given. Also updates condition codes. If
+ *      an invald function code is provided, sets E.stat to SINS.
+ * Params:   none
+ * Returns:  int - the result of the desired operation
+ * Modifies: E.stat
+ */
 int performOpl() {
     int val = 0;
     switch (E.ifun) {
@@ -55,6 +70,14 @@ int performOpl() {
     return val;
 }
 
+/* performRrmovl
+ *      Simulates the RRMOVL/CMOVXX instruction. Checks E.ifun and performs the
+ *      correct type of move based on the icode given. Updates Cnd to reflect
+ *      whether or not a conditional instruction should actually occur.
+ * Params:   none
+ * Returns:  int - E.valA
+ * Modifies: Cnd
+ */
 int performRrmovl() {
     switch (E.ifun) {
         case RRMOVL:
@@ -86,22 +109,62 @@ int performRrmovl() {
     return E.valA;
 }
 
+/* performIrmovl
+ *      Simulates the IRMOVL instruction. Well, kinda. Doesn't really do much.
+ * Params:   none
+ * Returns:  int - E.valC
+ * Modifies: none
+ */
 int performIrmovl() {
     return E.valC;
 }
 
+/* performRmmovl
+ *      Simulates the RMMOVL instruction. Again, just adding two numbers here.
+ * Params:   none
+ * Returns:  int - E.valC + E.valB
+ * Modifies: none
+ */
 int performRmmovl() {
     return E.valC + E.valB;
 }
 
+/* performMrmovl
+ *      Simulates the MRMOVL instruction. I dunno who I'm kidding anymore.
+ * Params:   none
+ * Returns:  int - E.valC + E.valB
+ * Modifies: none
+ */
 int performMrmovl() {
     return E.valC + E.valB;
 }
 
-int dump() {
+int performPop(){
+    Cnd = FALSE;
+    return 4 + E.valB;
+}
+
+int performPush(){
+    Cnd = FALSE;
+    return -4 + E.valB;
+}
+
+/* performDump
+ *      Simulates the DUMP instruction. *sigh*
+ * Params:   none
+ * Returns:  int - E.valC
+ * Modifies: none
+ */
+int performDump() {
     return E.valC;
 }
 
+/* updateCC
+ *      Helper method to update ZF and SF condition codes.
+ * Params:   int val - the value to set the CCs based on
+ * Returns:  void
+ * Modifies: none
+ */
 void updateCC(int val) {    
     if (val == 0) {
         setCC(ZF, 1);
@@ -160,9 +223,9 @@ void initializeFuncPtrArray() {
     funcArr[JXX] = &doNothing;
     funcArr[CALL] = &doNothing;
     funcArr[RET] = &doNothing;
-    funcArr[PUSHL] = &doNothing;
-    funcArr[POPL] = &doNothing;
-    funcArr[DUMP] = &dump;
+    funcArr[PUSHL] = &performPush;
+    funcArr[POPL] = &performPop;
+    funcArr[DUMP] = &performDump;
 }
 
 void printEregister() {

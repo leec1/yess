@@ -2,15 +2,16 @@
 
 #names of the input files
 @canfiles = ("lab5a", "lab5b", "lab6a", "lab6b", "lab6c",
-             "lab6d", "lab6e", "lab6f", "lab7a", "lab7b",
-             "lab7c", "lab7d", "lab7e", "lab7f", "error1", 
-             "error2", "error3", "error4", "error5", "error6",
+             "lab6d", "lab6e", "lab6f", "lab7a", "lab7b", "lab7c",
+             "lab7d", "lab8a", "lab8b", "lab8c", "lab8d",
+             "lab8e", "lab8f", "lab8g", "error1", "error2",
+             "error3", "error4", "error5", "error6",
              "error7", "error8", "error9");
 
 
 #subdirectory in which the output will be placed
 $dir = "Tests/";
-$canDir = "/u/css/classes/3481/104/lab7/";
+$canDir = "/u/css/classes/3481/104/lab8/";
 
 if (! -e $dir)
 {

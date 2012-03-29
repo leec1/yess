@@ -1,14 +1,14 @@
 #include <stdio.h>
 #include "types.h"
 #include "tools.h"
-/*
- * tools.c
- * Author:      Tyler Davis
- * Description: CS 3481, Lab 1 activity. A bunch of bit manipulation
- *              functions.
- * Last edit:   7 Feb, 2012
- */
 
+/* clearBuffer
+ *      Sets SIZE bytes at *REG in memory to 0.
+ * Params:   char *reg - the byte address in memory
+ *           uint size - the number of elements to zero out
+ * Returns:  void
+ * Modifies: Memory. Can I be more general than that?
+ */
 void clearBuffer(char *reg, unsigned int size) {
     unsigned int i;
     for (i=0; i<size; i++) {

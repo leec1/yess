@@ -17,9 +17,14 @@ eregister getEregister();
 
 void executeStage();
 int performOpl();
+int performRrmovl();
 int performIrmovl();
+int performRmmovl();
+int performMrmovl();
 int doNothing();
-int dump();
+int performPop();
+int performPush();
+int performDump();
 void updateCC(int val);
 void clearEregister();
 void updateEregister(int stat, int icode, int ifun, int valC, int valA,

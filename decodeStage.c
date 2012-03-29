@@ -9,10 +9,10 @@ static dregister D;
 
 /* decodeStage
  *      Handles the main combinational logic of the decode stage.
- * Params:   uint W_dstE - 
- *           uint W_valE -
+ * Params:   uint W_dstE - dstE from Writeback Register
+ *           uint W_valE - valE from Writeback Register
  * Returns:  void
- * Modifies: none?
+ * Modifies: Execute Register
  */
 void decodeStage(unsigned int W_dstE, unsigned int W_valE){
     int dstE = getDstE();
@@ -84,9 +84,9 @@ int getDstM() {
 
 /* selectFwdA
  *      Helper to decide if we need to forward data through the pipeline.
- * Params:   uint d_srcA -
- *           uint W_dstE -
- *           uint W_valE -
+ * Params:   uint d_srcA - intermediate srcA
+ *           uint W_dstE - dstE from Writeback Register
+ *           uint W_valE - valE from Writeback Register
  * Returns:  int - the value to forward
  * Modifies: none
  */
@@ -97,11 +97,11 @@ int selectFwdA(unsigned int d_srcA, unsigned int W_dstE, unsigned int W_valE) {
     return getRegister(d_srcA);
 }
 
-/* selectFwdA
+/* forwardB
  *      Helper to decide if we need to forward data through the pipeline.
- * Params:   uint d_srcA -
- *           uint W_dstE -
- *           uint W_valE -
+ * Params:   uint d_srcA - intermediate srcA
+ *           uint W_dstE - dstE from Writeback Register
+ *           uint W_valE - valE from Writeback Register
  * Returns:  int - the value to forward
  * Modifies: none
  */
@@ -133,13 +133,13 @@ void clearDregister() {
 
 /* updateDregister
  *      Sets the values in the Decode PIPE register to the specified values.
- * Params:   int stat - 
- *           int icode -
- *           int ifun -
- *           int rA -
- *           int rB -
- *           int valC - 
- *           int valP -
+ * Params:   int stat - Status of the Pipeline
+ *           int icode - Current Instruction
+ *           int ifun - Current Instruction (more information)
+ *           int rA - Register A from current Instruction
+ *           int rB - Register B from current Instruction
+ *           int valC - Immediate Value of current Instruction
+ *           int valP - Incremented PC for current Instruction
  * Returns:  void
  * Modifies: dregister D
  */

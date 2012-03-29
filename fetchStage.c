@@ -9,6 +9,12 @@ int selectPC(int predPC);
 
 static fregister F;
 
+/* fetchStage
+ *     Contains the main combinational logic of the fetch stage
+ * Params:   none
+ * Returns:  void
+ * Modifies: Decode Register
+ */
 void fetchStage() {
     bool memError;
     unsigned int f_pc = selectPC(F.predPC);
@@ -37,46 +43,20 @@ void fetchStage() {
         valC = buildWord(byte0, byte1, byte2, byte3);
     }
     
-    switch (icode) {
-        case HALT:
-            stat = SHLT;
-            F.predPC = F.predPC + 1;
-            break;
-        case NOP:
-            F.predPC = F.predPC + 1;
-            break;
-        case CMOV:
-            F.predPC = F.predPC + 2;
-            break;
-        case IRMOVL:
-            F.predPC = F.predPC + 6;
-            break;
-        case RMMOVL:
-            F.predPC = F.predPC + 6;
-            break;
-        case MRMOVL:
-            F.predPC = F.predPC + 6;
-            break;
-        case OPL:
-            F.predPC = F.predPC + 2;
-            break;
-        case JXX:
-            break;
-        case CALL:
-            break;
-        case RET:
-            break;
-        case PUSHL:
-            break;
-        case POPL:
-            break;
-        case DUMP:
-            F.predPC = F.predPC + 5;
-            break;
-        default:
-            F.predPC = F.predPC + 1; 
-            stat = SINS;
-            break;
+    if (icode == HALT) {
+        F.predPC += 1;
+        stat = SHLT;
+    } else if (icode == NOP || icode == RET)
+        F.predPC += 1;
+    else if (icode == CMOV || icode == OPL || icode == PUSHL || icode == POPL)
+        F.predPC += 2;
+    else if (icode == JXX || icode == CALL || icode == DUMP)
+        F.predPC += 5;
+    else if (icode == IRMOVL || icode == RMMOVL || icode == MRMOVL)
+        F.predPC += 6;
+    else {
+        F.predPC += 1;
+        stat = SINS;
     }
 
     valP = F.predPC;
@@ -84,12 +64,24 @@ void fetchStage() {
     updateDregister(stat, icode, ifun, rA, rB, valC, valP); 
 }
 
+/* instructionNeedsRegByte
+ *      Returns whether the instruction needs a Register
+ * Params:   icode - Current Instruction Type
+ * Returns:  bool
+ * Modifies: none
+ */
 bool instructionNeedsRegByte(int icode) {
     return (icode == CMOV) || (icode == OPL)    || (icode == PUSHL)  ||
            (icode == POPL) || (icode == IRMOVL) || (icode == RMMOVL) ||
            (icode == MRMOVL);
 }
 
+/* need_valC
+ *      Returns whether the instruction requires fetching valC
+ * Params:   icode - Current Instruction Type
+ * Returns:  int
+ * Modifies: none
+ */
 int need_valC(int icode) {
     if ((icode == JXX) || (icode == CALL) || (icode == DUMP)) return 1;
     if ((icode == IRMOVL) || (icode == RMMOVL) || (icode == MRMOVL)) return 2;

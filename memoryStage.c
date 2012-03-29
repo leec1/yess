@@ -8,6 +8,12 @@
 
 static mregister M;
 
+/* memoryStage
+ *      Controls the main combinational logic of the memory stage
+ * Params:   none
+ * Returns:  void
+ * Modifies: Writeback Register
+ */
 void memoryStage() {
     int valM = M.valA, stat = M.stat;
     bool readC = FALSE, writeC = FALSE, memError;
@@ -23,6 +29,13 @@ void memoryStage() {
     updateWregister(M.stat, M.icode, M.valE, valM, M.dstE, M.dstM);
 }
 
+/* memoryControl
+ *      Determines if the current instruction reads and/or writes to memory
+ * Params:   *readC - True if Instruction will read from memory
+ *           *writeC - True if Instruction will write to memory
+ * Returns:  void
+ * Modifies: *readC, *writeC
+ */
 void memoryControl(bool *readC, bool *writeC) {
     if (M.icode == MRMOVL || M.icode == POPL || M.icode == RET)
         *readC = TRUE;
@@ -30,6 +43,12 @@ void memoryControl(bool *readC, bool *writeC) {
         *writeC = TRUE;
 }
 
+/* memoryAddr
+ *      Returns the location of the memory to be overwritten
+ * Params:   none
+ * Returns:  int 
+ * Modifies: none
+ */
 int memoryAddr() {
     if (M.icode == RMMOVL || M.icode == PUSHL ||
         M.icode == CALL   || M.icode == MRMOVL)

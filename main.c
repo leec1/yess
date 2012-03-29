@@ -59,6 +59,12 @@ int main(int argc, char * argv[]) {
     return 0;
 }
 
+/* initialize
+ *      Initializes a bunch of stuff.
+ * Params:   none
+ * Returns:  void
+ * Modifies: W_valE, W_dstE
+ */
 void initialize() {
     W_valE = 0; W_dstE = 0;
     initializeFuncPtrArray();
