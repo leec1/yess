@@ -1,3 +1,6 @@
 yess
 *.o
 Tests
+*.swp
+Inputs/yesa
+Inputs/yess
