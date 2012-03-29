@@ -6,6 +6,9 @@
     irmovl $8, %ecx
     nop
     popl %edx
+    nop
+    nop
+    nop
     xorl %esp, %eax
     nop
     nop
@@ -19,6 +22,9 @@
     nop
     nop
     pushl %edx
+    nop
+    nop
+    nop
     addl %ecx, %esp
     nop
     nop
@@ -36,6 +42,9 @@
     nop
     nop
     popl %edx
+    nop
+    nop
+    nop
     xorl %esp, %eax
     nop
     nop
@@ -49,6 +58,9 @@
     nop
     nop
     pushl %edx
+    nop
+    nop
+    nop
     addl %ecx, %esp
     nop
     nop
@@ -66,6 +78,9 @@
     nop
     nop
     popl %edx
+    nop
+    nop
+    nop
     xorl %esp, %eax
     nop
     nop
@@ -79,6 +94,9 @@
     nop
     nop
     pushl %edx
+    nop
+    nop
+    nop
     addl %ecx, %esp
     nop
     nop
@@ -96,6 +114,9 @@
     nop
     nop
     popl %edx
+    nop
+    nop
+    nop
     xorl %esp, %eax
     nop
     nop
@@ -109,6 +130,9 @@
     nop
     nop
     pushl %edx
+    nop
+    nop
+    nop
     addl %ecx, %esp
     nop
     nop

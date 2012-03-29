@@ -2,145 +2,169 @@
                       | #This file copies the contents of one array into another array using pushl and
                       | #popl and dumps memory after the copy is performed.
                       | 
-  0x000: 30f4b8000000 |     irmovl source, %esp
-  0x006: 30f0cc000000 |     irmovl dest, %eax
+  0x000: 30f4d0000000 |     irmovl source, %esp
+  0x006: 30f0e4000000 |     irmovl dest, %eax
   0x00c: 30f108000000 |     irmovl $8, %ecx
   0x012: 10           |     nop
   0x013: b02f         |     popl %edx
-  0x015: 6340         |     xorl %esp, %eax
+  0x015: 10           |     nop
+  0x016: 10           |     nop
   0x017: 10           |     nop
-  0x018: 10           |     nop
-  0x019: 10           |     nop
-  0x01a: 6304         |     xorl %eax, %esp
+  0x018: 6340         |     xorl %esp, %eax
+  0x01a: 10           |     nop
+  0x01b: 10           |     nop
   0x01c: 10           |     nop
-  0x01d: 10           |     nop
-  0x01e: 10           |     nop
-  0x01f: 6340         |     xorl %esp, %eax
+  0x01d: 6304         |     xorl %eax, %esp
+  0x01f: 10           |     nop
+  0x020: 10           |     nop
   0x021: 10           |     nop
-  0x022: 10           |     nop
-  0x023: 10           |     nop
-  0x024: a02f         |     pushl %edx
-  0x026: 6014         |     addl %ecx, %esp
-  0x028: 10           |     nop
+  0x022: 6340         |     xorl %esp, %eax
+  0x024: 10           |     nop
+  0x025: 10           |     nop
+  0x026: 10           |     nop
+  0x027: a02f         |     pushl %edx
   0x029: 10           |     nop
   0x02a: 10           |     nop
-  0x02b: 6340         |     xorl %esp, %eax
-  0x02d: 10           |     nop
+  0x02b: 10           |     nop
+  0x02c: 6014         |     addl %ecx, %esp
   0x02e: 10           |     nop
   0x02f: 10           |     nop
-  0x030: 6304         |     xorl %eax, %esp
-  0x032: 10           |     nop
+  0x030: 10           |     nop
+  0x031: 6340         |     xorl %esp, %eax
   0x033: 10           |     nop
   0x034: 10           |     nop
-  0x035: 6340         |     xorl %esp, %eax
-  0x037: 10           |     nop
+  0x035: 10           |     nop
+  0x036: 6304         |     xorl %eax, %esp
   0x038: 10           |     nop
   0x039: 10           |     nop
-  0x03a: b02f         |     popl %edx
-  0x03c: 6340         |     xorl %esp, %eax
+  0x03a: 10           |     nop
+  0x03b: 6340         |     xorl %esp, %eax
+  0x03d: 10           |     nop
   0x03e: 10           |     nop
   0x03f: 10           |     nop
-  0x040: 10           |     nop
-  0x041: 6304         |     xorl %eax, %esp
+  0x040: b02f         |     popl %edx
+  0x042: 10           |     nop
   0x043: 10           |     nop
   0x044: 10           |     nop
-  0x045: 10           |     nop
-  0x046: 6340         |     xorl %esp, %eax
+  0x045: 6340         |     xorl %esp, %eax
+  0x047: 10           |     nop
   0x048: 10           |     nop
   0x049: 10           |     nop
-  0x04a: 10           |     nop
-  0x04b: a02f         |     pushl %edx
-  0x04d: 6014         |     addl %ecx, %esp
-  0x04f: 10           |     nop
-  0x050: 10           |     nop
+  0x04a: 6304         |     xorl %eax, %esp
+  0x04c: 10           |     nop
+  0x04d: 10           |     nop
+  0x04e: 10           |     nop
+  0x04f: 6340         |     xorl %esp, %eax
   0x051: 10           |     nop
-  0x052: 6340         |     xorl %esp, %eax
-  0x054: 10           |     nop
-  0x055: 10           |     nop
+  0x052: 10           |     nop
+  0x053: 10           |     nop
+  0x054: a02f         |     pushl %edx
   0x056: 10           |     nop
-  0x057: 6304         |     xorl %eax, %esp
-  0x059: 10           |     nop
-  0x05a: 10           |     nop
+  0x057: 10           |     nop
+  0x058: 10           |     nop
+  0x059: 6014         |     addl %ecx, %esp
   0x05b: 10           |     nop
-  0x05c: 6340         |     xorl %esp, %eax
-  0x05e: 10           |     nop
-  0x05f: 10           |     nop
+  0x05c: 10           |     nop
+  0x05d: 10           |     nop
+  0x05e: 6340         |     xorl %esp, %eax
   0x060: 10           |     nop
-  0x061: b02f         |     popl %edx
-  0x063: 6340         |     xorl %esp, %eax
+  0x061: 10           |     nop
+  0x062: 10           |     nop
+  0x063: 6304         |     xorl %eax, %esp
   0x065: 10           |     nop
   0x066: 10           |     nop
   0x067: 10           |     nop
-  0x068: 6304         |     xorl %eax, %esp
+  0x068: 6340         |     xorl %esp, %eax
   0x06a: 10           |     nop
   0x06b: 10           |     nop
   0x06c: 10           |     nop
-  0x06d: 6340         |     xorl %esp, %eax
+  0x06d: b02f         |     popl %edx
   0x06f: 10           |     nop
   0x070: 10           |     nop
   0x071: 10           |     nop
-  0x072: a02f         |     pushl %edx
-  0x074: 6014         |     addl %ecx, %esp
+  0x072: 6340         |     xorl %esp, %eax
+  0x074: 10           |     nop
+  0x075: 10           |     nop
   0x076: 10           |     nop
-  0x077: 10           |     nop
-  0x078: 10           |     nop
-  0x079: 6340         |     xorl %esp, %eax
+  0x077: 6304         |     xorl %eax, %esp
+  0x079: 10           |     nop
+  0x07a: 10           |     nop
   0x07b: 10           |     nop
-  0x07c: 10           |     nop
-  0x07d: 10           |     nop
-  0x07e: 6304         |     xorl %eax, %esp
+  0x07c: 6340         |     xorl %esp, %eax
+  0x07e: 10           |     nop
+  0x07f: 10           |     nop
   0x080: 10           |     nop
-  0x081: 10           |     nop
-  0x082: 10           |     nop
-  0x083: 6340         |     xorl %esp, %eax
+  0x081: a02f         |     pushl %edx
+  0x083: 10           |     nop
+  0x084: 10           |     nop
   0x085: 10           |     nop
-  0x086: 10           |     nop
-  0x087: 10           |     nop
-  0x088: b02f         |     popl %edx
-  0x08a: 6340         |     xorl %esp, %eax
-  0x08c: 10           |     nop
+  0x086: 6014         |     addl %ecx, %esp
+  0x088: 10           |     nop
+  0x089: 10           |     nop
+  0x08a: 10           |     nop
+  0x08b: 6340         |     xorl %esp, %eax
   0x08d: 10           |     nop
   0x08e: 10           |     nop
-  0x08f: 6304         |     xorl %eax, %esp
-  0x091: 10           |     nop
+  0x08f: 10           |     nop
+  0x090: 6304         |     xorl %eax, %esp
   0x092: 10           |     nop
   0x093: 10           |     nop
-  0x094: 6340         |     xorl %esp, %eax
-  0x096: 10           |     nop
+  0x094: 10           |     nop
+  0x095: 6340         |     xorl %esp, %eax
   0x097: 10           |     nop
   0x098: 10           |     nop
-  0x099: a02f         |     pushl %edx
-  0x09b: 6014         |     addl %ecx, %esp
+  0x099: 10           |     nop
+  0x09a: b02f         |     popl %edx
+  0x09c: 10           |     nop
   0x09d: 10           |     nop
   0x09e: 10           |     nop
-  0x09f: 10           |     nop
-  0x0a0: 6340         |     xorl %esp, %eax
+  0x09f: 6340         |     xorl %esp, %eax
+  0x0a1: 10           |     nop
   0x0a2: 10           |     nop
   0x0a3: 10           |     nop
-  0x0a4: 10           |     nop
-  0x0a5: 6304         |     xorl %eax, %esp
+  0x0a4: 6304         |     xorl %eax, %esp
+  0x0a6: 10           |     nop
   0x0a7: 10           |     nop
   0x0a8: 10           |     nop
-  0x0a9: 10           |     nop
-  0x0aa: 6340         |     xorl %esp, %eax
-  0x0ac: c007000000   |     dump 7
+  0x0a9: 6340         |     xorl %esp, %eax
+  0x0ab: 10           |     nop
+  0x0ac: 10           |     nop
+  0x0ad: 10           |     nop
+  0x0ae: a02f         |     pushl %edx
+  0x0b0: 10           |     nop
   0x0b1: 10           |     nop
   0x0b2: 10           |     nop
-  0x0b3: 10           |     nop
-  0x0b4: 00           |     halt
+  0x0b3: 6014         |     addl %ecx, %esp
+  0x0b5: 10           |     nop
+  0x0b6: 10           |     nop
+  0x0b7: 10           |     nop
+  0x0b8: 6340         |     xorl %esp, %eax
+  0x0ba: 10           |     nop
+  0x0bb: 10           |     nop
+  0x0bc: 10           |     nop
+  0x0bd: 6304         |     xorl %eax, %esp
+  0x0bf: 10           |     nop
+  0x0c0: 10           |     nop
+  0x0c1: 10           |     nop
+  0x0c2: 6340         |     xorl %esp, %eax
+  0x0c4: c007000000   |     dump 7
+  0x0c9: 10           |     nop
+  0x0ca: 10           |     nop
+  0x0cb: 10           |     nop
+  0x0cc: 00           |     halt
                       | 
-  0x0b8:              | .align 4
-  0x0b8:              | source:
-  0x0b8: 01000000     | .long 1
-  0x0bc: 02000000     | .long 2
-  0x0c0: 03000000     | .long 3
-  0x0c4: 04000000     | .long 4
-  0x0c8: 00000000     | .long 0
+  0x0d0:              | .align 4
+  0x0d0:              | source:
+  0x0d0: 01000000     | .long 1
+  0x0d4: 02000000     | .long 2
+  0x0d8: 03000000     | .long 3
+  0x0dc: 04000000     | .long 4
+  0x0e0: 00000000     | .long 0
                       | 
-  0x0cc:              | .align 4
-  0x0cc:              | dest: 
-  0x0cc: 00000000     | .long 0
-  0x0d0: 00000000     | .long 0
-  0x0d4: 00000000     | .long 0
-  0x0d8: 00000000     | .long 0
-  0x0dc: 00000000     | .long 0
+  0x0e4:              | .align 4
+  0x0e4:              | dest: 
+  0x0e4: 00000000     | .long 0
+  0x0e8: 00000000     | .long 0
+  0x0ec: 00000000     | .long 0
+  0x0f0: 00000000     | .long 0
+  0x0f4: 00000000     | .long 0
