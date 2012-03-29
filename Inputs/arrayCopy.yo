@@ -1,0 +1,60 @@
+                      | 
+                      | #This file copies the contents of one array into another array and dumps memory
+                      | #after the copy is performed.
+                      | 
+  0x000: 30f06c000000 |     irmovl source, %eax
+  0x006: 30f380000000 |     irmovl dest, %ebx
+  0x00c: 30f204000000 |     irmovl $4, %edx
+  0x012: 10           |     nop
+  0x013: 501000000000 |     mrmovl (%eax), %ecx
+  0x019: 6020         |     addl %edx, %eax
+  0x01b: 10           |     nop
+  0x01c: 10           |     nop
+  0x01d: 401300000000 |     rmmovl %ecx, (%ebx)
+  0x023: 6023         |     addl %edx, %ebx
+  0x025: 10           |     nop
+  0x026: 10           |     nop
+  0x027: 501000000000 |     mrmovl (%eax), %ecx
+  0x02d: 6020         |     addl %edx, %eax
+  0x02f: 10           |     nop
+  0x030: 10           |     nop
+  0x031: 401300000000 |     rmmovl %ecx, (%ebx)
+  0x037: 6023         |     addl %edx, %ebx
+  0x039: 10           |     nop
+  0x03a: 10           |     nop
+  0x03b: 501000000000 |     mrmovl (%eax), %ecx
+  0x041: 6020         |     addl %edx, %eax
+  0x043: 10           |     nop
+  0x044: 10           |     nop
+  0x045: 401300000000 |     rmmovl %ecx, (%ebx)
+  0x04b: 6023         |     addl %edx, %ebx
+  0x04d: 10           |     nop
+  0x04e: 10           |     nop
+  0x04f: 501000000000 |     mrmovl (%eax), %ecx
+  0x055: 6020         |     addl %edx, %eax
+  0x057: 10           |     nop
+  0x058: 10           |     nop
+  0x059: 401300000000 |     rmmovl %ecx, (%ebx)
+  0x05f: 6023         |     addl %edx, %ebx
+  0x061: 10           |     nop
+  0x062: 10           |     nop
+  0x063: c007000000   |     dump 7
+  0x068: 10           |     nop
+  0x069: 10           |     nop
+  0x06a: 10           |     nop
+  0x06b: 00           |     halt
+                      | 
+  0x06c:              | source:
+  0x06c: 01000000     | .long 1
+  0x070: 02000000     | .long 2
+  0x074: 03000000     | .long 3
+  0x078: 04000000     | .long 4
+  0x07c: 00000000     | .long 0
+                      | 
+  0x080:              | dest: 
+  0x080: 00000000     | .long 0
+  0x084: 00000000     | .long 0
+  0x088: 00000000     | .long 0
+  0x08c: 00000000     | .long 0
+  0x090: 00000000     | .long 0
+                      | 

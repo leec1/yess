@@ -139,11 +139,23 @@ int performMrmovl() {
     return E.valC + E.valB;
 }
 
+/* performPop
+ *      Simulates the POPL instruction.  
+ * Params:   none
+ * Returns:  int - 4+ E.valB
+ * Modifies: Cnd
+ */
 int performPop(){
     Cnd = FALSE;
     return 4 + E.valB;
 }
 
+/* performPush
+ *      Simulates the PUSHL instruction.
+ * Params:   none
+ * Returns:  int - E.valB -4
+ * Modifies: Cnd
+ */
 int performPush(){
     Cnd = FALSE;
     return -4 + E.valB;

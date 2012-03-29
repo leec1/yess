@@ -1,0 +1,145 @@
+#This file copies the contents of one array into another array using pushl and
+#popl and dumps memory after the copy is performed.
+
+    irmovl source, %esp
+    irmovl dest, %eax
+    irmovl $8, %ecx
+    nop
+    popl %edx
+    xorl %esp, %eax
+    nop
+    nop
+    nop
+    xorl %eax, %esp
+    nop
+    nop
+    nop
+    xorl %esp, %eax
+    nop
+    nop
+    nop
+    pushl %edx
+    addl %ecx, %esp
+    nop
+    nop
+    nop
+    xorl %esp, %eax
+    nop
+    nop
+    nop
+    xorl %eax, %esp
+    nop
+    nop
+    nop
+    xorl %esp, %eax
+    nop
+    nop
+    nop
+    popl %edx
+    xorl %esp, %eax
+    nop
+    nop
+    nop
+    xorl %eax, %esp
+    nop
+    nop
+    nop
+    xorl %esp, %eax
+    nop
+    nop
+    nop
+    pushl %edx
+    addl %ecx, %esp
+    nop
+    nop
+    nop
+    xorl %esp, %eax
+    nop
+    nop
+    nop
+    xorl %eax, %esp
+    nop
+    nop
+    nop
+    xorl %esp, %eax
+    nop
+    nop
+    nop
+    popl %edx
+    xorl %esp, %eax
+    nop
+    nop
+    nop
+    xorl %eax, %esp
+    nop
+    nop
+    nop
+    xorl %esp, %eax
+    nop
+    nop
+    nop
+    pushl %edx
+    addl %ecx, %esp
+    nop
+    nop
+    nop
+    xorl %esp, %eax
+    nop
+    nop
+    nop
+    xorl %eax, %esp
+    nop
+    nop
+    nop
+    xorl %esp, %eax
+    nop
+    nop
+    nop
+    popl %edx
+    xorl %esp, %eax
+    nop
+    nop
+    nop
+    xorl %eax, %esp
+    nop
+    nop
+    nop
+    xorl %esp, %eax
+    nop
+    nop
+    nop
+    pushl %edx
+    addl %ecx, %esp
+    nop
+    nop
+    nop
+    xorl %esp, %eax
+    nop
+    nop
+    nop
+    xorl %eax, %esp
+    nop
+    nop
+    nop
+    xorl %esp, %eax
+    dump 7
+    nop
+    nop
+    nop
+    halt
+
+.align 4
+source:
+.long 1
+.long 2
+.long 3
+.long 4
+.long 0
+
+.align 4
+dest: 
+.long 0
+.long 0
+.long 0
+.long 0
+.long 0

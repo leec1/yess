@@ -1,0 +1,56 @@
+#This file copies the contents of one array into another array and dumps memory
+#after the copy is performed.
+
+    irmovl source, %eax
+    irmovl dest, %ebx
+    irmovl $4, %edx
+    nop
+    mrmovl (%eax), %ecx
+    addl %edx, %eax
+    nop
+    nop
+    rmmovl %ecx, (%ebx)
+    addl %edx, %ebx
+    nop
+    nop
+    mrmovl (%eax), %ecx
+    addl %edx, %eax
+    nop
+    nop
+    rmmovl %ecx, (%ebx)
+    addl %edx, %ebx
+    nop
+    nop
+    mrmovl (%eax), %ecx
+    addl %edx, %eax
+    nop
+    nop
+    rmmovl %ecx, (%ebx)
+    addl %edx, %ebx
+    nop
+    nop
+    mrmovl (%eax), %ecx
+    addl %edx, %eax
+    nop
+    nop
+    rmmovl %ecx, (%ebx)
+    addl %edx, %ebx
+    nop
+    nop
+    dump 4
+    halt
+
+source:
+.long 1
+.long 2
+.long 3
+.long 4
+.long 0
+
+dest: 
+.long 0
+.long 0
+.long 0
+.long 0
+.long 0
+
