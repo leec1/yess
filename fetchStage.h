@@ -6,7 +6,8 @@ typedef struct {
 
 fregister getFregister();
 
-void fetchStage();
+void fetchStage(unsigned int *M_Cnd, unsigned int *M_icode,
+                unsigned int *M_valA, unsigned int *W_icode);
 bool instructionNeedsRegByte(int icode);
 int need_valC(int icode);
 void clearFregister();

@@ -12,7 +12,13 @@ typedef struct {
 
 mregister getMregister();
 
-void memoryStage();
+void memoryStage(unsigned int *W_valE, unsigned int *W_valM,
+                 unsigned int *W_dstE, unsigned int *W_dstM,
+                 unsigned int *m_valM, unsigned int *M_dstE,
+                 unsigned int *M_dstM, unsigned int *M_valE,
+                 unsigned int *M_Cnd, unsigned int *M_icode,
+                 unsigned int *M_valA);
+
 void memoryControl(bool *readC, bool *writeC);
 int memoryAddr();
 void clearMregister();

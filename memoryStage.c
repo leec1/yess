@@ -7,26 +7,56 @@
 #include "memoryStage.h"
 
 static mregister M;
+static bool canUpdateMem;
 
 /* memoryStage
  *      Controls the main combinational logic of the memory stage
- * Params:   none
+ * Params:   //TODO: fix
  * Returns:  void
  * Modifies: Writeback Register
  */
-void memoryStage() {
+void memoryStage(unsigned int *W_valE, unsigned int *W_valM,
+                 unsigned int *W_dstE, unsigned int *W_dstM,
+                 unsigned int *m_valM, unsigned int *M_dstE,
+                 unsigned int *M_dstM, unsigned int *M_valE,
+                 unsigned int *M_Cnd, unsigned int *M_icode,
+                 unsigned int *M_valA) {
+
+    if (M.stat == SINS || M.stat == SADR || M.stat == SHLT)
+        canUpdateMem = FALSE;
     int valM = M.valA, stat = M.stat;
-    bool readC = FALSE, writeC = FALSE, memError;
+    bool readC = FALSE, writeC = FALSE, memError = FALSE;
+    
     memoryControl(&readC, &writeC);
     
     int memAddr = memoryAddr();
     
-    if (readC) valM = getWord(memAddr, &memError);
-    if (writeC) putWord(memAddr, M.valA, &memError);
+    if (readC)
+        valM = getWord(memAddr, &memError);
+    if(memError){
+        stat = SADR;
+        canUpdateMem = FALSE;
+    }
+    if (writeC && canUpdateMem) putWord(memAddr, M.valA, &memError);
 
-    if (memError) stat = SADR;
-
-    updateWregister(M.stat, M.icode, M.valE, valM, M.dstE, M.dstM);
+    if (memError){
+        stat = SADR;
+        canUpdateMem = FALSE;
+    }
+    
+    *W_dstE = M.dstE;
+    *W_valE = M.valE;
+    *M_valE = M.valE;
+    *W_dstM = M.dstM;
+    *W_valM = valM;
+    *m_valM = valM;
+    *M_dstE = M.dstE;
+    *M_dstM = M.dstM;
+    *M_Cnd = M.Cnd;
+    *M_icode = M.icode;
+    *M_valA = M.valA;
+    
+    updateWregister(stat, M.icode, M.valE, valM, M.dstE, M.dstM);
 }
 
 /* memoryControl
@@ -76,10 +106,13 @@ mregister getMregister() {
  */
 void clearMregister() {
     clearBuffer((char *) &M, sizeof(M));
+    canUpdateMem = TRUE;
+    M.stat = SAOK;
+    M.icode = NOP;
 }
 
 void updateMregister(int stat, int icode, int Cnd, int valE, int valA,
-                     int dstE, int dstM){
+                     int dstE, int dstM) {
     M.stat = stat;
     M.icode = icode;
     M.Cnd = Cnd;

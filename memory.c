@@ -19,7 +19,7 @@ unsigned char getByte(int address, bool *memError) {
         *memError = TRUE;
         return 0;
     }
-    return getByteNumber(address&3, fetch(address/4, memError));
+    return getByteNumber(address&3, fetch(address>>2, memError));
 }
 
 /* putByte
@@ -52,7 +52,7 @@ unsigned int getWord(int address, bool *memError) {
         *memError = TRUE;
         return 0;
     }
-    return fetch(address/4, memError);
+    return fetch(address>>2, memError);
 }
 
 /* putWord
@@ -66,7 +66,7 @@ unsigned int getWord(int address, bool *memError) {
  */
 void putWord(int address, unsigned int value, bool *memError) {
     if ((address & 3) != 0) *memError = TRUE;
-    else store(address/4, value, memError);
+    else store(address>>2, value, memError);
 }
 
 /* clearMemory

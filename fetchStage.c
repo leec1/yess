@@ -2,10 +2,14 @@
 #include "types.h"
 #include "tools.h"
 #include "memory.h"
-#include "decodeStage.h"
 #include "fetchStage.h"
+#include "decodeStage.h"
 
-int selectPC(int predPC);
+#include "memoryStage.h"
+#include "writebackStage.h"
+
+int selectPC(int predPC, unsigned int *M_Cnd, unsigned int *M_icode,
+             unsigned int *M_valA, unsigned int *W_icode);
 
 static fregister F;
 
@@ -15,9 +19,9 @@ static fregister F;
  * Returns:  void
  * Modifies: Decode Register
  */
-void fetchStage() {
+void fetchStage(unsigned int *M_Cnd, unsigned int *M_icode, unsigned int *M_valA, unsigned int *W_icode) {
     bool memError;
-    unsigned int f_pc = selectPC(F.predPC);
+    unsigned int f_pc = selectPC(F.predPC, M_Cnd, M_icode, M_valA, W_icode);
 
     unsigned char inst = getByte(f_pc, &memError);
     
@@ -31,6 +35,7 @@ void fetchStage() {
 
     if (instructionNeedsRegByte(icode)) {
         int regs = getByte(f_pc+1, &memError);
+        if (memError) stat = SINS;
         rB = getBits(0, 3, regs);
         rA = getBits(4, 7, regs);
     }
@@ -41,26 +46,40 @@ void fetchStage() {
         unsigned char byte2 = getByte(f_pc+off+2, &memError);
         unsigned char byte3 = getByte(f_pc+off+3, &memError);
         valC = buildWord(byte0, byte1, byte2, byte3);
+        if (memError) stat = SADR;
     }
-    
+
     if (icode == HALT) {
         F.predPC += 1;
+        valP = F.predPC;
         stat = SHLT;
-    } else if (icode == NOP || icode == RET)
+    } else if (icode == NOP || icode == RET){
         F.predPC += 1;
-    else if (icode == CMOV || icode == OPL || icode == PUSHL || icode == POPL)
+        valP = F.predPC;
+    }
+    else if (icode == CMOV || icode == OPL || icode == PUSHL || icode == POPL){
         F.predPC += 2;
-    else if (icode == JXX || icode == CALL || icode == DUMP)
+        valP = F.predPC;
+    }
+    else if (icode == DUMP){
         F.predPC += 5;
-    else if (icode == IRMOVL || icode == RMMOVL || icode == MRMOVL)
+        valP = F.predPC;
+    }
+    else if (icode == IRMOVL || icode == RMMOVL || icode == MRMOVL){
         F.predPC += 6;
+        valP = F.predPC;
+    }
+    else if (icode == JXX || icode == CALL){
+        valP = F.predPC + 5;
+        F.predPC = valC;
+    }
     else {
         F.predPC += 1;
+        valP = F.predPC;
         stat = SINS;
     }
 
-    valP = F.predPC;
-
+    //valP = F.predPC;
     updateDregister(stat, icode, ifun, rA, rB, valC, valP); 
 }
 
@@ -108,14 +127,14 @@ void clearFregister() {
     clearBuffer((char *) &F, sizeof(F));
 }
 
-int selectPC(int predPC) {
+int selectPC(int predPC, unsigned int *M_Cnd, unsigned int *M_icode, unsigned int *M_valA, unsigned int *W_icode) {
     //wregister W = getWregister();
     //mregister M = getMregister();
 
-    //if (M.icode == JXX && !M.Cnd)
-    //    return M.valA;
-    //if (W.icode == RET)
-    //    return W.valM;
+    if (*M_icode == JXX && !(*M_Cnd))
+        return *M_valA;
+    if (*W_icode == RET)
+        return *M_valA; //W.valM;
     return predPC;
 }
 

@@ -15,20 +15,26 @@ typedef struct {
 
 eregister getEregister();
 
-void executeStage();
-int performOpl();
+void executeStage(unsigned int *e_dstE, unsigned int *e_valE);
+
+int doNothing();
 int performRrmovl();
 int performIrmovl();
 int performRmmovl();
 int performMrmovl();
-int doNothing();
+int performOpl();
+int performJXX();
+int performCall();
+int performRet();
 int performPop();
 int performPush();
 int performDump();
+
 void updateCC(int val);
 void clearEregister();
 void updateEregister(int stat, int icode, int ifun, int valC, int valA,
                      int valB, int dstE, int dstM, int srcA, int srcB);
+
 void initializeFuncPtrArray();
 void printEregister();
 #endif

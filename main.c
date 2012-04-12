@@ -16,8 +16,15 @@
 int clockCount;
 bool stop;
 
-unsigned int W_valE;
-unsigned int W_dstE;
+unsigned int e_dstE, e_valE;
+unsigned int M_dstM, M_dstE;
+unsigned int m_valM, M_valE;
+unsigned int W_dstM, W_dstE;
+unsigned int W_valM, W_valE;
+unsigned int M_Cnd;
+unsigned int M_icode;
+unsigned int M_valA;
+unsigned int W_icode;
 
 void initialize();
 
@@ -34,26 +41,23 @@ int main(int argc, char * argv[]) {
     
     initialize();
     
-    if (!load()) {//printf("\n");
+    if (!load()) {
         dumpMemory();
         return 0;
     }
     
-    clockCount = 0;
-    stop = FALSE;
     while(!stop) {
-        stop = writebackStage(&W_dstE, &W_valE);
-        memoryStage();
-        executeStage();
-        decodeStage(W_dstE, W_valE);
-        fetchStage();
+        stop = writebackStage(&W_dstE, &W_valE, &W_icode);
+        memoryStage(&W_valE, &W_valM, &W_dstE, &W_dstM, &m_valM,
+                    &M_dstE, &M_dstM, &M_valE, &M_Cnd, &M_icode,
+                    &M_valA);
+        executeStage(&e_dstE, &e_valE);
+        decodeStage(&W_dstE, &W_valE, &e_dstE, &e_valE, &M_dstM,
+                    &m_valM, &M_dstE, &M_valE, &W_dstM, &W_valM);
+        fetchStage(&M_Cnd, &M_icode, &M_valA, &W_icode);
         clockCount++;
     }
 
-    //dumpProgramRegisters();
-    //dumpProcessorRegisters();
-    //dumpMemory(); 
-    
     printf("\nTotal clock cycles = %d\n", clockCount);
 
     return 0;
@@ -66,7 +70,12 @@ int main(int argc, char * argv[]) {
  * Modifies: W_valE, W_dstE
  */
 void initialize() {
-    W_valE = 0; W_dstE = 0;
+    clockCount = 0;
+    stop = FALSE;
+    
+    W_valE = 0;
+    W_dstE = 0;
+    
     initializeFuncPtrArray();
     initializeCC();
     clearMemory();

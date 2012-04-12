@@ -8,66 +8,38 @@
 static eregister E;
 int (*funcArr[16])();
 bool Cnd;
+static bool canUpdateCC;
 
 /* executeStage
  *      Handles the main combination logic of the execute stage.
- * Params:   none
+ * Params:   uint *e_dstE - 
+ *           uint *e_valE -
  * Returns:  void
  * Modifies: Cnd
  */
-void executeStage() {
+void executeStage(unsigned int *e_dstE, unsigned int *e_valE) {
     Cnd = FALSE;
-    int valE = (*funcArr[E.icode])();
+    int valE = 0;
     int dstE = E.dstE;
+
+    if (E.stat == SINS || E.stat == SADR || E.stat == SHLT)
+        canUpdateCC = FALSE;
+
+    if (E.stat != SINS)
+        valE = (*funcArr[E.icode])();
+    
     if (E.icode == CMOV && !Cnd)
         dstE = RNONE;
+
+    *e_dstE = dstE;
+    *e_valE = valE;
+
     updateMregister(E.stat, E.icode, Cnd, valE, E.valA, dstE, E.dstM);
 }
 
 //placeholder function for the function pointer array
 int doNothing() {
     return 0;
-}
-
-/* performOpl
- *      Simulates the OPL instruction. Checks E.ifun and performs the correct
- *      operation based on the icode given. Also updates condition codes. If
- *      an invald function code is provided, sets E.stat to SINS.
- * Params:   none
- * Returns:  int - the result of the desired operation
- * Modifies: E.stat
- */
-int performOpl() {
-    int val = 0;
-    switch (E.ifun) {
-        case ADD:
-            val = E.valB + E.valA;
-            if ((isNeg(E.valB) && isNeg(E.valA) && !isNeg(val))  ||
-                (!isNeg(E.valB) && !isNeg(E.valA) && isNeg(val)))
-                setCC(OF, 1);
-            else setCC(OF, 0);
-            break;
-        case SUB:
-            val = E.valB - E.valA;
-            if ((isNeg(E.valB) && !isNeg(E.valA) && !isNeg(val)) ||
-                (!isNeg(E.valB) && isNeg(E.valA) && isNeg(val)))
-                setCC(OF, 1);
-            else setCC(OF, 0);
-            break;
-        case AND:
-            setCC(OF, 0);
-            val = E.valB & E.valA;
-            break;
-        case XOR:
-            setCC(OF, 0);
-            val =  E.valB ^ E.valA;
-            break;
-        default:
-            E.stat = SINS;
-            break;
-    }
-    updateCC(val);
-    return val;
 }
 
 /* performRrmovl
@@ -139,15 +111,91 @@ int performMrmovl() {
     return E.valC + E.valB;
 }
 
-/* performPop
- *      Simulates the POPL instruction.  
+/* performOpl
+ *      Simulates the OPL instruction. Checks E.ifun and performs the correct
+ *      operation based on the icode given. Also updates condition codes. If
+ *      an invald function code is provided, sets E.stat to SINS.
  * Params:   none
- * Returns:  int - 4+ E.valB
- * Modifies: Cnd
+ * Returns:  int - the result of the desired operation
+ * Modifies: E.stat
  */
-int performPop(){
-    Cnd = FALSE;
-    return 4 + E.valB;
+int performOpl() {
+    int val = 0;
+    switch (E.ifun) {
+        case ADD:
+            val = E.valB + E.valA;
+            if (canUpdateCC &&
+                ((isNeg(E.valB) && isNeg(E.valA) && !isNeg(val))  ||
+                (!isNeg(E.valB) && !isNeg(E.valA) && isNeg(val))))
+                setCC(OF, 1);
+            else if(canUpdateCC) setCC(OF, 0);
+            break;
+        case SUB:
+            val = E.valB - E.valA;
+            if (canUpdateCC &&
+                ((isNeg(E.valB) && !isNeg(E.valA) && !isNeg(val)) ||
+                (!isNeg(E.valB) && isNeg(E.valA) && isNeg(val))))
+                setCC(OF, 1);
+            else if(canUpdateCC) setCC(OF, 0);
+            break;
+        case AND:
+            if(canUpdateCC) setCC(OF, 0);
+            val = E.valB & E.valA;
+            break;
+        case XOR:
+            if(canUpdateCC) setCC(OF, 0);
+            val =  E.valB ^ E.valA;
+            break;
+        default:
+            E.stat = SINS;
+            break;
+    }
+    updateCC(val);
+    return val;
+}
+
+int performJXX() {
+    switch (E.ifun) {
+        case JMP:
+            Cnd = TRUE;
+            break;
+        case JLE:
+            Cnd = (getCC(SF) && !getCC(OF)) || (!getCC(SF) && getCC(OF)) || getCC(ZF);
+            //(getCC(SF) ^ getCC(OF) | getCC(ZF))? 0: 1;
+            break;
+        case JL:
+            Cnd = (getCC(SF) && !getCC(OF)) || (!getCC(SF) && getCC(OF));
+            //getCC(SF) ^ getCC(OF)? 0:1;
+            break;
+        case JE:
+            Cnd = getCC(ZF);
+            break;
+        case JNE:
+            Cnd = !getCC(ZF);
+            break;
+        case JGE:
+            Cnd = (getCC(SF) && getCC(OF)) || (!getCC(SF) && !getCC(OF));
+            //(getCC(SF) ^ getCC(OF)) ? 1: 0;
+            break;
+        case JG:
+            Cnd = (getCC(SF)  && getCC(OF)  && !getCC(ZF)) ||
+                  (!getCC(SF) && !getCC(OF) && !getCC(ZF));
+            //~(getCC(SF) ^ getCC(OF)) & ~getCC(ZF) ? 0: 1;
+            break;
+        default:
+            //E.stat = SINS;
+            Cnd = FALSE;
+            break;
+    }
+    return E.valA;
+}
+
+int performCall() {
+    return E.valB - 4;
+}
+
+int performRet() {
+    return E.valB + 4;
 }
 
 /* performPush
@@ -159,6 +207,17 @@ int performPop(){
 int performPush(){
     Cnd = FALSE;
     return -4 + E.valB;
+}
+
+/* performPop
+ *      Simulates the POPL instruction.  
+ * Params:   none
+ * Returns:  int - 4+ E.valB
+ * Modifies: Cnd
+ */
+int performPop(){
+    Cnd = FALSE;
+    return 4 + E.valB;
 }
 
 /* performDump
@@ -178,6 +237,7 @@ int performDump() {
  * Modifies: none
  */
 void updateCC(int val) {    
+    if (!canUpdateCC) return;
     if (val == 0) {
         setCC(ZF, 1);
         setCC(SF, 0);
@@ -208,6 +268,10 @@ eregister getEregister() {
  */
 void clearEregister() {
     clearBuffer((char *) &E, sizeof(E));
+    canUpdateCC = TRUE;
+    E.stat = SAOK;
+    E.icode = NOP;
+
 }
 
 void updateEregister(int stat, int icode, int ifun, int valC, int valA,
@@ -232,9 +296,9 @@ void initializeFuncPtrArray() {
     funcArr[RMMOVL] = &performRmmovl;
     funcArr[MRMOVL] = &performMrmovl;
     funcArr[OPL] = &performOpl;
-    funcArr[JXX] = &doNothing;
-    funcArr[CALL] = &doNothing;
-    funcArr[RET] = &doNothing;
+    funcArr[JXX] = &performJXX;
+    funcArr[CALL] = &performCall;
+    funcArr[RET] = &performRet;
     funcArr[PUSHL] = &performPush;
     funcArr[POPL] = &performPop;
     funcArr[DUMP] = &performDump;

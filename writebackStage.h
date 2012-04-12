@@ -11,7 +11,7 @@ typedef struct {
 
 wregister getWregister();
 
-bool writebackStage(unsigned int *W_dstE, unsigned int *W_valE);
+bool writebackStage(unsigned int *W_dstE, unsigned int *W_valE, unsigned int *W_icode);
 void clearWregister();
 void updateWregister(int stat, int icode, int valE, int valM,
                      int dstE, int dstM);
