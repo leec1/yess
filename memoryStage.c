@@ -54,7 +54,9 @@ void memoryStage(unsigned int *W_valE, unsigned int *W_valM,
     *M_dstM = M.dstM;
     *M_Cnd = M.Cnd;
     *M_icode = M.icode;
-    *M_valA = M.valA;
+    *M_valA = valM;
+    //printf("setting *M_valA to %d\n", *M_valA);
+    
     
     updateWregister(stat, M.icode, M.valE, valM, M.dstE, M.dstM);
 }

@@ -10,6 +10,8 @@ int (*funcArr[16])();
 bool Cnd;
 static bool canUpdateCC;
 
+void setCnd(unsigned int fCode);
+
 /* executeStage
  *      Handles the main combination logic of the execute stage.
  * Params:   uint *e_dstE - 
@@ -51,33 +53,7 @@ int doNothing() {
  * Modifies: Cnd
  */
 int performRrmovl() {
-    switch (E.ifun) {
-        case RRMOVL:
-            Cnd = TRUE;
-            break;
-        case CMOVLE:
-            Cnd = (getCC(SF) && !getCC(OF)) || (!getCC(SF) && getCC(OF)) || getCC(ZF);
-            break;
-        case CMOVL:
-            Cnd = (getCC(SF) && !getCC(OF)) || (!getCC(SF) && getCC(OF));
-            break;
-        case CMOVE:
-            Cnd = getCC(ZF);
-            break;
-        case CMOVNE:
-            Cnd = !getCC(ZF);
-            break;
-        case CMOVGE:
-            Cnd = (getCC(SF) && getCC(OF)) || (!getCC(SF) && !getCC(OF));
-            break;
-        case CMOVG:
-            Cnd = (getCC(SF)  && getCC(OF)  && !getCC(ZF)) ||
-                  (!getCC(SF) && !getCC(OF) && !getCC(ZF));
-            break;
-        default:
-            Cnd = FALSE;
-            break;
-    }
+    setCnd(E.ifun);
     return E.valA;
 }
 
@@ -155,38 +131,7 @@ int performOpl() {
 }
 
 int performJXX() {
-    switch (E.ifun) {
-        case JMP:
-            Cnd = TRUE;
-            break;
-        case JLE:
-            Cnd = (getCC(SF) && !getCC(OF)) || (!getCC(SF) && getCC(OF)) || getCC(ZF);
-            //(getCC(SF) ^ getCC(OF) | getCC(ZF))? 0: 1;
-            break;
-        case JL:
-            Cnd = (getCC(SF) && !getCC(OF)) || (!getCC(SF) && getCC(OF));
-            //getCC(SF) ^ getCC(OF)? 0:1;
-            break;
-        case JE:
-            Cnd = getCC(ZF);
-            break;
-        case JNE:
-            Cnd = !getCC(ZF);
-            break;
-        case JGE:
-            Cnd = (getCC(SF) && getCC(OF)) || (!getCC(SF) && !getCC(OF));
-            //(getCC(SF) ^ getCC(OF)) ? 1: 0;
-            break;
-        case JG:
-            Cnd = (getCC(SF)  && getCC(OF)  && !getCC(ZF)) ||
-                  (!getCC(SF) && !getCC(OF) && !getCC(ZF));
-            //~(getCC(SF) ^ getCC(OF)) & ~getCC(ZF) ? 0: 1;
-            break;
-        default:
-            //E.stat = SINS;
-            Cnd = FALSE;
-            break;
-    }
+    setCnd(E.ifun);
     return E.valA;
 }
 
@@ -228,6 +173,36 @@ int performPop(){
  */
 int performDump() {
     return E.valC;
+}
+
+void setCnd(unsigned int fCode) {
+    switch (fCode) {
+        case 0:      // RRMOVL + JMP
+            Cnd = TRUE;
+            break;
+        case CMOVLE: // LE
+            Cnd = (getCC(SF) && !getCC(OF)) || (!getCC(SF) && getCC(OF)) || getCC(ZF);
+            break;
+        case CMOVL:  // L
+            Cnd = (getCC(SF) && !getCC(OF)) || (!getCC(SF) && getCC(OF));
+            break;
+        case CMOVE:  // E
+            Cnd = getCC(ZF);
+            break;
+        case CMOVNE: // NE
+            Cnd = !getCC(ZF);
+            break;
+        case CMOVGE: // GE
+            Cnd = (getCC(SF) && getCC(OF)) || (!getCC(SF) && !getCC(OF));
+            break;
+        case CMOVG: // G
+            Cnd = (getCC(SF)  && getCC(OF)  && !getCC(ZF)) ||
+                  (!getCC(SF) && !getCC(OF) && !getCC(ZF));
+            break;
+        default:
+            Cnd = FALSE;
+            break;
+    }
 }
 
 /* updateCC

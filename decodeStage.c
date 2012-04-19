@@ -116,8 +116,12 @@ int selectFwdA(unsigned int d_srcA, unsigned int W_dstE, unsigned int W_valE,
                unsigned int e_dstE, unsigned int e_valE, unsigned int M_dstM,
                unsigned int m_valM, unsigned int M_dstE, unsigned int M_valE,
                unsigned int W_dstM, unsigned int W_valM) {
+    //printf("\nSelecting FwdA: D.icode == %d\n", D.icode);
+    if (D.icode == CALL || D.icode == JXX) {
+        //printf("\nA: Using D_valP\n");
+        return D.valP;
+    }
     if (d_srcA == RNONE) return 0;
-    if (D.icode == CALL || D.icode == JXX) return D.valP;
     if (d_srcA == e_dstE){
 //        printf("\nA: Using e_valE\n");   
         return e_valE; 

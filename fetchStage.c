@@ -19,9 +19,12 @@ static fregister F;
  * Returns:  void
  * Modifies: Decode Register
  */
-void fetchStage(unsigned int *M_Cnd, unsigned int *M_icode, unsigned int *M_valA, unsigned int *W_icode) {
+void fetchStage(unsigned int *M_Cnd, unsigned int *M_icode,
+                unsigned int *M_valA, unsigned int *W_icode) {
     bool memError;
     unsigned int f_pc = selectPC(F.predPC, M_Cnd, M_icode, M_valA, W_icode);
+   printf("PC = %x\n", f_pc);
+    F.predPC = f_pc;
 
     unsigned char inst = getByte(f_pc, &memError);
     
@@ -79,7 +82,6 @@ void fetchStage(unsigned int *M_Cnd, unsigned int *M_icode, unsigned int *M_valA
         stat = SINS;
     }
 
-    //valP = F.predPC;
     updateDregister(stat, icode, ifun, rA, rB, valC, valP); 
 }
 
@@ -131,8 +133,10 @@ int selectPC(int predPC, unsigned int *M_Cnd, unsigned int *M_icode, unsigned in
     //wregister W = getWregister();
     //mregister M = getMregister();
 
-    if (*M_icode == JXX && !(*M_Cnd))
+    if (*M_icode == JXX && !(*M_Cnd)) {
+        //printf("Mispredicted Branch, returning %d\n", *M_valA);
         return *M_valA;
+    }
     if (*W_icode == RET)
         return *M_valA; //W.valM;
     return predPC;
