@@ -4,7 +4,7 @@
 #include "registers.h"
 #include "memoryStage.h"
 #include "executeStage.h"
-
+#include "writebackStage.h"
 static eregister E;
 int (*funcArr[16])();
 bool Cnd;
@@ -39,11 +39,17 @@ void executeStage(fwdStruct *fwd) {
 
     fwd->e_dstE = dstE;
     fwd->e_valE = valE;
-    
+    fwd->E_dstM = E.dstM;
+    fwd->e_Cnd = Cnd;
+    fwd->E_icode = E.icode;
+        
     if(M_bubble(fwd))
         clearMregister();
-    if(!M_stall())
+    if(M_stall()){
+        //clearWregister();
+    }else{
         updateMregister(E.stat, E.icode, Cnd, valE, E.valA, dstE, E.dstM);
+    }
 }
 
 //placeholder function for the function pointer array

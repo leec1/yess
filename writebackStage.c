@@ -23,6 +23,7 @@ bool writebackStage(fwdStruct *fwd) {
     fwd->W_icode = W.icode;
     fwd->W_valM = W.valM;
     fwd->W_dstM = W.dstM;
+    fwd->W_stat = W.stat;
     //printf("*WvalM set to %d\n", fwd->W_valM);
     
     switch (W.stat) {

@@ -2,6 +2,7 @@
 #include "types.h"
 #include "tools.h"
 #include "registers.h"
+#include "memoryStage.h"
 #include "executeStage.h"
 #include "decodeStage.h"
 
@@ -33,8 +34,12 @@ bool E_stall();
 void decodeStage(fwdStruct *fwd) {
     int dstE = getDstE();
     int dstM = getDstM();
+    
     unsigned int srcA = getSrcA();
     unsigned int srcB = getSrcB();
+    fwd->d_srcA = srcA;
+    fwd->d_srcB = srcB;
+    fwd->D_icode = D.icode;
     /*int valA = selectFwdA(srcA, *W_dstE, *W_valE, *e_dstE, *e_valE, *M_dstM,
                           *m_valM, *M_dstE, *M_valE, *W_dstM, *W_valM);
     int valB = forwardB(srcB, *W_dstE, *W_valE, *e_dstE, *e_valE, *M_dstM,
@@ -44,11 +49,14 @@ void decodeStage(fwdStruct *fwd) {
     int valA = selectFwdA(srcA, fwd);
     int valB = forwardB(srcB, fwd);
    
-    if(E_bubble(srcA, srcB, fwd))
-        updateEregister(0,0,0,0,0,0,0,0,0,0);
-    if(!E_stall())
+    if (E_bubble(srcA, srcB, fwd))
+        clearEregister();
+    if (E_stall()) {
+        //clearMregister();
+    } else {
         updateEregister(D.stat, D.icode, D.ifun, D.valC, valA, valB, dstE,
                     dstM, srcA, srcB);
+    }
 }
 
 /* getSrcA
@@ -111,23 +119,9 @@ int getDstM() {
 /* selectFwdA
  *      Helper to decide if we need to forward data through the pipeline.
  * Params:   uint d_srcA - intermediate srcA
- *           uint W_dstE - dstE from Writeback Register
- *           uint W_valE - valE from Writeback Register
- *           uint e_dstE -
- *           uint e_valE -
- *           uint M_dstM -
- *           uint m_valM -
- *           uint M_dstE -
- *           uint M_valE -
- *           uint W_dstM -
- *           uint W_valM -
  * Returns:  int - the value to forward
  * Modifies: none
  */
-/*int selectFwdA(unsigned int d_srcA, unsigned int W_dstE, unsigned int W_valE,
-               unsigned int e_dstE, unsigned int e_valE, unsigned int M_dstM,
-               unsigned int m_valM, unsigned int M_dstE, unsigned int M_valE,
-               unsigned int W_dstM, unsigned int W_valM) {*/
 int selectFwdA(unsigned int d_srcA, fwdStruct *fwd) {
     if (D.icode == CALL || D.icode == JXX) return D.valP;
     if (d_srcA == RNONE) return 0;
@@ -160,21 +154,9 @@ int selectFwdA(unsigned int d_srcA, fwdStruct *fwd) {
  * Params:   uint d_srcA - intermediate srcA
  *           uint W_dstE - dstE from Writeback Register
  *           uint W_valE - valE from Writeback Register
- *           uint e_dstE -
- *           uint e_valE -
- *           uint M_dstM -
- *           uint m_valM -
- *           uint M_dstE -
- *           uint M_valE -
- *           uint W_dstM -
- *           uint W_valM -
  * Returns:  int - the value to forward
  * Modifies: none
  */
-/*int forwardB(unsigned int d_srcB, unsigned int W_dstE, unsigned int W_valE,
-             unsigned int e_dstE, unsigned int e_valE, unsigned int M_dstM,
-             unsigned int m_valM, unsigned int M_dstE, unsigned int M_valE,
-             unsigned int W_dstM, unsigned int W_valM) {*/
 int forwardB(unsigned int d_srcB, fwdStruct *fwd){
 
     if (d_srcB == RNONE) return 0;
@@ -203,9 +185,9 @@ int forwardB(unsigned int d_srcB, fwdStruct *fwd){
 }
 
 bool E_bubble(unsigned int d_srcA, unsigned int d_srcB, fwdStruct *fwd){
-    return (fwd->E_icode == JXX || !(fwd->e_Cnd)) ||
-           ((fwd->E_icode == MRMOVL || fwd->E_icode == POPL) &&
-           (fwd->E_dstM == d_srcA || fwd->E_dstM == d_srcB));
+    return (fwd->E_icode == JXX && !(fwd->e_Cnd)) ||
+               ((fwd->E_icode == MRMOVL || fwd->E_icode == POPL) &&
+               (fwd->E_dstM == d_srcA || fwd->E_dstM == d_srcB));
 }
 
 bool E_stall(){

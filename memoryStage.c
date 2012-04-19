@@ -9,7 +9,7 @@
 static mregister M;
 static bool canUpdateMem;
 
-bool W_stall(unsigned int W_stat);
+bool W_stall(fwdStruct *fwd);
 
 /* memoryStage
  *      Controls the main combinational logic of the memory stage
@@ -54,10 +54,13 @@ void memoryStage(fwdStruct *fwd) {
     fwd->M_Cnd = M.Cnd;
     fwd->M_icode = M.icode;
     fwd->M_valA = M.valA;
+    fwd->m_stat = stat;
 
     //printf("setting fwd->M_valA to %d\n", fwd->M_valA);
-    if(!W_stall(stat))    
+    if(W_stall(fwd)){
+    }else{
         updateWregister(stat, M.icode, M.valE, valM, M.dstE, M.dstM);
+    }
 }
 
 /* memoryControl
@@ -89,8 +92,8 @@ int memoryAddr() {
     return 0;
 }
 
-bool W_stall(unsigned int W_stat){
-    return W_stat == SADR || W_stat == SINS || W_stat == SINS;
+bool W_stall(fwdStruct *fwd){
+    return fwd->W_stat == SADR || fwd->W_stat == SINS || fwd->W_stat == SHLT;
 }
 
 /* getMregister
