@@ -7,6 +7,9 @@
 
 static dregister D;
 
+bool E_bubble(unsigned int d_srcA, unsigned int d_srcB, fwdStruct *fwd);
+bool E_stall(); 
+
 /* decodeStage
  *      Handles the main combinational logic of the decode stage.
  * Params:   uint *W_dstE - dstE from Writeback Register
@@ -22,20 +25,29 @@ static dregister D;
  * Returns:  void
  * Modifies: Execute Register
  */
-void decodeStage(unsigned int *W_dstE, unsigned int *W_valE,
+/*void decodeStage(unsigned int *W_dstE, unsigned int *W_valE,
                  unsigned int *e_dstE, unsigned int *e_valE,
                  unsigned int *M_dstM, unsigned int *m_valM,
                  unsigned int *M_dstE, unsigned int *M_valE,
-                 unsigned int *W_dstM, unsigned int *W_valM) {
+                 unsigned int *W_dstM, unsigned int *W_valM) {*/
+void decodeStage(fwdStruct *fwd) {
     int dstE = getDstE();
     int dstM = getDstM();
     unsigned int srcA = getSrcA();
     unsigned int srcB = getSrcB();
-    int valA = selectFwdA(srcA, *W_dstE, *W_valE, *e_dstE, *e_valE, *M_dstM,
+    /*int valA = selectFwdA(srcA, *W_dstE, *W_valE, *e_dstE, *e_valE, *M_dstM,
                           *m_valM, *M_dstE, *M_valE, *W_dstM, *W_valM);
     int valB = forwardB(srcB, *W_dstE, *W_valE, *e_dstE, *e_valE, *M_dstM,
                         *m_valM, *M_dstE, *M_valE, *W_dstM, *W_valM);
     updateEregister(D.stat, D.icode, D.ifun, D.valC, valA, valB, dstE,
+                    dstM, srcA, srcB);*/
+    int valA = selectFwdA(srcA, fwd);
+    int valB = forwardB(srcB, fwd);
+   
+    if(E_bubble(srcA, srcB, fwd))
+        updateEregister(0,0,0,0,0,0,0,0,0,0);
+    if(!E_stall())
+        updateEregister(D.stat, D.icode, D.ifun, D.valC, valA, valB, dstE,
                     dstM, srcA, srcB);
 }
 
@@ -112,35 +124,32 @@ int getDstM() {
  * Returns:  int - the value to forward
  * Modifies: none
  */
-int selectFwdA(unsigned int d_srcA, unsigned int W_dstE, unsigned int W_valE,
+/*int selectFwdA(unsigned int d_srcA, unsigned int W_dstE, unsigned int W_valE,
                unsigned int e_dstE, unsigned int e_valE, unsigned int M_dstM,
                unsigned int m_valM, unsigned int M_dstE, unsigned int M_valE,
-               unsigned int W_dstM, unsigned int W_valM) {
-    //printf("\nSelecting FwdA: D.icode == %d\n", D.icode);
-    if (D.icode == CALL || D.icode == JXX) {
-        //printf("\nA: Using D_valP\n");
-        return D.valP;
-    }
+               unsigned int W_dstM, unsigned int W_valM) {*/
+int selectFwdA(unsigned int d_srcA, fwdStruct *fwd) {
+    if (D.icode == CALL || D.icode == JXX) return D.valP;
     if (d_srcA == RNONE) return 0;
-    if (d_srcA == e_dstE){
+    if (d_srcA == fwd->e_dstE){
 //        printf("\nA: Using e_valE\n");   
-        return e_valE; 
+        return fwd->e_valE; 
     }
-    if (d_srcA == M_dstM){
+    if (d_srcA == fwd->M_dstM){
 //        printf("\nA: Using m_valM\n");   
-        return m_valM;
+        return fwd->m_valM;
     }
-    if (d_srcA == M_dstE){
+    if (d_srcA == fwd->M_dstE){
 //        printf("\nA: Using M_valE\n");   
-        return M_valE;
+        return fwd->M_valE;
     }
-    if (d_srcA == W_dstM){
+    if (d_srcA == fwd->W_dstM){
 //        printf("\nA: Using W_valM\n");   
-        return W_valM;
+        return fwd->W_valM;
     }
-    if (d_srcA == W_dstE){
+    if (d_srcA == fwd->W_dstE){
 //        printf("\nA: Using W_valE\n");   
-        return W_valE;
+        return fwd->W_valE;
     }
 //    printf("\nA: No forwarding neccessary\n");
     return getRegister(d_srcA);
@@ -162,33 +171,45 @@ int selectFwdA(unsigned int d_srcA, unsigned int W_dstE, unsigned int W_valE,
  * Returns:  int - the value to forward
  * Modifies: none
  */
-int forwardB(unsigned int d_srcB, unsigned int W_dstE, unsigned int W_valE,
+/*int forwardB(unsigned int d_srcB, unsigned int W_dstE, unsigned int W_valE,
              unsigned int e_dstE, unsigned int e_valE, unsigned int M_dstM,
              unsigned int m_valM, unsigned int M_dstE, unsigned int M_valE,
-             unsigned int W_dstM, unsigned int W_valM) {
+             unsigned int W_dstM, unsigned int W_valM) {*/
+int forwardB(unsigned int d_srcB, fwdStruct *fwd){
+
     if (d_srcB == RNONE) return 0;
-    if (d_srcB == e_dstE){
+    if (d_srcB == fwd->e_dstE){
 //        printf("\nB: Using e_valE\n");   
-        return e_valE;
+        return fwd->e_valE;
     }
-    if (d_srcB == M_dstM){
+    if (d_srcB == fwd->M_dstM){
 //        printf("\nB: Using m_valM\n");
-        return m_valM;
+        return fwd->m_valM;
     }
-    if (d_srcB == M_dstE){
+    if (d_srcB == fwd->M_dstE){
 //        printf("\nB: Using M_valE\n");   
-        return M_valE;
+        return fwd->M_valE;
     }
-    if (d_srcB == W_dstM){
+    if (d_srcB == fwd->W_dstM){
 //        printf("\nB: Using W_valM\n");   
-        return W_valM;
+        return fwd->W_valM;
     }
-    if (d_srcB == W_dstE){
+    if (d_srcB == fwd->W_dstE){
 //        printf("\nB: Using W_valE\n");   
-        return W_valE;
+        return fwd->W_valE;
     }
 //    printf("\nB: No forwarding neccessary\n");
     return getRegister(d_srcB);
+}
+
+bool E_bubble(unsigned int d_srcA, unsigned int d_srcB, fwdStruct *fwd){
+    return (fwd->E_icode == JXX || !(fwd->e_Cnd)) ||
+           ((fwd->E_icode == MRMOVL || fwd->E_icode == POPL) &&
+           (fwd->E_dstM == d_srcA || fwd->E_dstM == d_srcB));
+}
+
+bool E_stall(){
+    return FALSE;
 }
 
 /* getDregister

@@ -8,8 +8,25 @@
 #include "memoryStage.h"
 #include "writebackStage.h"
 
-int selectPC(int predPC, unsigned int *M_Cnd, unsigned int *M_icode,
-             unsigned int *M_valA, unsigned int *W_icode);
+/*int selectPC(int predPC, unsigned int *M_Cnd, unsigned int *M_icode,
+             unsigned int *M_valA, unsigned int *W_icode, unsigned int *W_valM);*/
+int selectPC(int predPC, fwdStruct *fwd);
+
+bool F_bubble();
+
+/*bool F_stall(unsigned int E_icode, unsigned int E_dstM, unsigned int d_srcA,
+             unsigned int d_srcB, unsigned int D_icode, unsigned int E_icode,
+             unsigned int M_icode);
+
+bool D_stall(unsigned int E_icode, unsigned int E_dstM, unsigned int d_srcA, unsigned int d_srcB);
+
+bool D_bubble(unsigned int E_icode, unsigned int e_Cnd, unsigned int E_dstM, unsigned int d_srcA,
+              unsigned int d_srcB, unsigned int D_icode, unsigned int E_icode, unsigned int M_icode);*/
+
+bool F_stall(fwdStruct *fwd);
+
+bool D_bubble(fwdStruct *fwd);
+bool D_stall(fwdStruct *fwd);
 
 static fregister F;
 
@@ -19,11 +36,13 @@ static fregister F;
  * Returns:  void
  * Modifies: Decode Register
  */
-void fetchStage(unsigned int *M_Cnd, unsigned int *M_icode,
-                unsigned int *M_valA, unsigned int *W_icode) {
+/*void fetchStage(unsigned int *M_Cnd, unsigned int *M_icode,
+                unsigned int *M_valA, unsigned int *W_icode,
+                unsigned int *W_valM) {*/
+void fetchStage(fwdStruct *fwd) {
     bool memError;
-    unsigned int f_pc = selectPC(F.predPC, M_Cnd, M_icode, M_valA, W_icode);
-   printf("PC = %x\n", f_pc);
+    unsigned int f_pc = selectPC(F.predPC, fwd);
+    //printf("PC = %x\n", f_pc);
     F.predPC = f_pc;
 
     unsigned char inst = getByte(f_pc, &memError);
@@ -74,6 +93,7 @@ void fetchStage(unsigned int *M_Cnd, unsigned int *M_icode,
     }
     else if (icode == JXX || icode == CALL){
         valP = F.predPC + 5;
+        //printf("\nvalP = %d\n", valP);
         F.predPC = valC;
     }
     else {
@@ -81,8 +101,11 @@ void fetchStage(unsigned int *M_Cnd, unsigned int *M_icode,
         valP = F.predPC;
         stat = SINS;
     }
-
-    updateDregister(stat, icode, ifun, rA, rB, valC, valP); 
+    
+    if(D_bubble(fwd))
+        clearDregister();
+    if(!D_stall(fwd))
+        updateDregister(stat, icode, ifun, rA, rB, valC, valP); 
 }
 
 /* instructionNeedsRegByte
@@ -109,6 +132,33 @@ int need_valC(int icode) {
     return 0;
 }
 
+bool F_bubble() {
+    return FALSE;
+}
+
+/*bool F_stall(unsigned int E_icode, unsigned int E_dstM, unsigned int d_srcA,
+             unsigned int d_srcB, unsigned int D_icode, M_icode) {*/
+bool F_stall(fwdStruct *fwd) {
+    return ((fwd->E_icode == MRMOVL || fwd->E_icode == POPL) &&
+            (fwd->E_dstM == fwd->d_srcA || fwd->E_dstM == fwd->d_srcB)) ||
+            (fwd->D_icode == RET || fwd->E_icode == RET || fwd->M_icode == RET);
+}
+
+/*bool D_bubble(unsigned int E_icode, unsigned int e_Cnd, unsigned int E_dstM, unsigned int d_srcA,
+              unsigned int d_srcB, unsigned int D_icode, unsigned int E_icode, unsigned int M_icode){*/
+bool D_bubble(fwdStruct *fwd) {
+    return (fwd->E_icode == JXX && !fwd->e_Cnd) ||
+           !((fwd->E_icode == MRMOVL || fwd->E_icode == POPL) &&
+           (fwd->E_dstM == fwd->d_srcA || fwd->E_dstM == fwd->d_srcB) &&
+           (fwd->D_icode == RET || fwd->E_icode == RET || fwd->M_icode == RET));
+}
+
+//bool D_stall(unsigned int E_icode, unsigned int E_dstM, unsigned int d_srcA, unsigned int d_srcB){
+bool D_stall(fwdStruct *fwd) {
+    return (fwd->E_icode == MRMOVL || fwd->E_icode == POPL) &&
+           (fwd->E_dstM == fwd->d_srcA || fwd->E_dstM == fwd->d_srcB);
+}
+
 /* getFregister
  *      Returns a copy of the F register
  * Params:   none
@@ -129,16 +179,19 @@ void clearFregister() {
     clearBuffer((char *) &F, sizeof(F));
 }
 
-int selectPC(int predPC, unsigned int *M_Cnd, unsigned int *M_icode, unsigned int *M_valA, unsigned int *W_icode) {
+//int selectPC(int predPC, unsigned int *M_Cnd, unsigned int *M_icode, unsigned int *M_valA, unsigned int *W_icode, unsigned int *W_valM) {
+int selectPC(int predPC, fwdStruct *fwd) {
     //wregister W = getWregister();
     //mregister M = getMregister();
 
-    if (*M_icode == JXX && !(*M_Cnd)) {
+    if (fwd->M_icode == JXX && !fwd->M_Cnd) {
         //printf("Mispredicted Branch, returning %d\n", *M_valA);
-        return *M_valA;
+        return fwd->M_valA;
     }
-    if (*W_icode == RET)
-        return *M_valA; //W.valM;
+    if (fwd->W_icode == RET){
+        //printf("\nRET, returning %d\n", *W_valM);
+        return fwd->W_valM;
+    }
     return predPC;
 }
 

@@ -15,7 +15,8 @@ typedef struct {
 
 eregister getEregister();
 
-void executeStage(unsigned int *e_dstE, unsigned int *e_valE);
+//void executeStage(unsigned int *e_dstE, unsigned int *e_valE);
+void executeStage(fwdStruct *fwd);
 
 int doNothing();
 int performRrmovl();

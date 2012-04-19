@@ -10,16 +10,20 @@ int (*funcArr[16])();
 bool Cnd;
 static bool canUpdateCC;
 
+bool M_stall();
+bool M_bubble(fwdStruct *fwd);
+
 void setCnd(unsigned int fCode);
 
 /* executeStage
  *      Handles the main combination logic of the execute stage.
- * Params:   uint *e_dstE - 
+ * Params:   uint *e_dstE - //TODO: fix
  *           uint *e_valE -
  * Returns:  void
  * Modifies: Cnd
  */
-void executeStage(unsigned int *e_dstE, unsigned int *e_valE) {
+//void executeStage(unsigned int *e_dstE, unsigned int *e_valE) {
+void executeStage(fwdStruct *fwd) {
     Cnd = FALSE;
     int valE = 0;
     int dstE = E.dstE;
@@ -33,10 +37,13 @@ void executeStage(unsigned int *e_dstE, unsigned int *e_valE) {
     if (E.icode == CMOV && !Cnd)
         dstE = RNONE;
 
-    *e_dstE = dstE;
-    *e_valE = valE;
-
-    updateMregister(E.stat, E.icode, Cnd, valE, E.valA, dstE, E.dstM);
+    fwd->e_dstE = dstE;
+    fwd->e_valE = valE;
+    
+    if(M_bubble(fwd))
+        clearMregister();
+    if(!M_stall())
+        updateMregister(E.stat, E.icode, Cnd, valE, E.valA, dstE, E.dstM);
 }
 
 //placeholder function for the function pointer array
@@ -223,6 +230,15 @@ void updateCC(int val) {
         setCC(ZF, 0);
         setCC(SF, 0);
     }
+}
+
+bool M_stall() {
+    return FALSE;
+}
+
+bool M_bubble(fwdStruct *fwd) {
+    return (fwd->m_stat == SADR || fwd->m_stat == SINS || fwd->m_stat == SHLT) ||
+           (fwd->W_stat == SADR || fwd->W_stat == SINS || fwd->W_stat == SHLT);
 }
 
 /* getEregister

@@ -4,6 +4,36 @@
 #define FALSE 0
 typedef int bool;
 
+typedef struct {
+    //fetch
+    unsigned int d_srcA;
+    unsigned int d_srcB;
+    //decode
+    unsigned int D_icode;
+    //execute
+    unsigned int E_icode;
+    unsigned int e_Cnd;
+    unsigned int e_dstE;
+    unsigned int e_valE;
+    unsigned int E_dstM;
+    //memory
+    unsigned int M_icode;
+    unsigned int M_Cnd;
+    unsigned int m_stat;
+    unsigned int M_dstM;
+    unsigned int M_dstE;
+    unsigned int m_valM;
+    unsigned int M_valE;
+    unsigned int M_valA;
+    //writeback
+    unsigned int W_icode;
+    unsigned int W_stat;
+    unsigned int W_dstM;
+    unsigned int W_dstE;
+    unsigned int W_valM;
+    unsigned int W_valE;
+} fwdStruct;
+
 //Y-86 Instruction Codes
 #define HALT   0x0
 #define NOP    0x1

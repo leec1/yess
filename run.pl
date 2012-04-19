@@ -2,20 +2,23 @@
 
 #names of the input files
 @canfiles = ("lab5a", "lab5b", "lab6a", "lab6b", "lab6c",
-             "lab6d", "lab6e", "lab6f", "lab7a", "lab7b", "lab7c",
-             "lab7d", "lab8a", "lab8b", "lab8c", "lab8d",
-             "lab8e", "lab8f", "lab8g", "lab9a", "lab9b", "lab9c",
-             "lab9d", "lab9e", "lab9f", "lab9g", "lab9h",
-             "lab9i", "lab9j", "lab10a", "lab10b", "lab10c",
-             "lab10d", "lab10e", "lab10f", "lab10g", "lab10h",
-             "lab10i", "lab10j", "error1", "error2",
-             "error3", "error4", "error5", "error6",
-             "error7", "error8", "error9");
+             "lab6d", "lab6e", "lab6f", "lab7a", "lab7b", 
+             "lab7c", "lab7d", "lab8a", "lab8b", "lab8c", 
+             "lab8d", "lab8e", "lab8f", "lab8g", "lab9a", 
+             "lab9b", "lab9c", "lab9d", "lab9e", "lab9f", 
+             "lab9g", "lab9h", "lab9i", "lab9j", "lab9k", 
+             "lab9l", "lab9m", "lab9n", "lab9o", "lab10a", 
+             "lab10b", "lab10c", "lab10d", "lab10e", "lab10f", 
+             "lab10g", "lab10h", "lab10i", "lab10j", "lab11a", 
+             "lab11b", "lab11c", "lab11d", "lab11e", "lab11f", 
+             "lab11g", "lab11h", "error1", "error2", "error3", 
+             "error4", "error5", "error6", "error7", "error8", 
+             "error9");
 
 
 #subdirectory in which the output will be placed
 $dir = "Tests/";
-$canDir = "/u/css/classes/3481/104/lab10/";
+$canDir = "/u/css/classes/3481/104/lab11/";
 
 if (! -e $dir)
 {

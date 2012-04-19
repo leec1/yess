@@ -14,10 +14,16 @@ static wregister W;
  * Returns:  bool - stat == AOK
  * Modifies: *W_dstE, *W_valE, *W_icode
  */
-bool writebackStage(unsigned int *W_dstE, unsigned int *W_valE, unsigned int *W_icode){
-    *W_dstE = W.dstE;
-    *W_valE = W.valE;
-    *W_icode = W.icode;
+/*bool writebackStage(unsigned int *W_icode,
+                    unsigned int *W_dstE, unsigned int *W_valE,
+                    unsigned int *W_dstM,  unsigned int *W_valM) {*/
+bool writebackStage(fwdStruct *fwd) {
+    fwd->W_dstE = W.dstE;
+    fwd->W_valE = W.valE;
+    fwd->W_icode = W.icode;
+    fwd->W_valM = W.valM;
+    fwd->W_dstM = W.dstM;
+    //printf("*WvalM set to %d\n", fwd->W_valM);
     
     switch (W.stat) {
         case SAOK:
@@ -38,7 +44,7 @@ bool writebackStage(unsigned int *W_dstE, unsigned int *W_valE, unsigned int *W_
         case SHLT:
             return TRUE;       
         default:
-            printf("uhhhh");
+            printf("uhhhh\n");
     }
     
     setRegister(W.dstE, W.valE);

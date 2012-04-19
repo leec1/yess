@@ -9,18 +9,19 @@
 static mregister M;
 static bool canUpdateMem;
 
+bool W_stall(unsigned int W_stat);
+
 /* memoryStage
  *      Controls the main combinational logic of the memory stage
  * Params:   //TODO: fix
  * Returns:  void
  * Modifies: Writeback Register
  */
-void memoryStage(unsigned int *W_valE, unsigned int *W_valM,
-                 unsigned int *W_dstE, unsigned int *W_dstM,
-                 unsigned int *m_valM, unsigned int *M_dstE,
+/*void memoryStage(unsigned int *m_valM, unsigned int *M_dstE,
                  unsigned int *M_dstM, unsigned int *M_valE,
                  unsigned int *M_Cnd, unsigned int *M_icode,
-                 unsigned int *M_valA) {
+                 unsigned int *M_valA) {*/
+void memoryStage(fwdStruct *fwd) {
 
     if (M.stat == SINS || M.stat == SADR || M.stat == SHLT)
         canUpdateMem = FALSE;
@@ -33,10 +34,12 @@ void memoryStage(unsigned int *W_valE, unsigned int *W_valM,
     
     if (readC)
         valM = getWord(memAddr, &memError);
-    if(memError){
+
+    if(memError) {
         stat = SADR;
         canUpdateMem = FALSE;
     }
+    
     if (writeC && canUpdateMem) putWord(memAddr, M.valA, &memError);
 
     if (memError){
@@ -44,21 +47,17 @@ void memoryStage(unsigned int *W_valE, unsigned int *W_valM,
         canUpdateMem = FALSE;
     }
     
-    *W_dstE = M.dstE;
-    *W_valE = M.valE;
-    *M_valE = M.valE;
-    *W_dstM = M.dstM;
-    *W_valM = valM;
-    *m_valM = valM;
-    *M_dstE = M.dstE;
-    *M_dstM = M.dstM;
-    *M_Cnd = M.Cnd;
-    *M_icode = M.icode;
-    *M_valA = valM;
-    //printf("setting *M_valA to %d\n", *M_valA);
-    
-    
-    updateWregister(stat, M.icode, M.valE, valM, M.dstE, M.dstM);
+    fwd->M_valE = M.valE;
+    fwd->m_valM = valM;
+    fwd->M_dstE = M.dstE;
+    fwd->M_dstM = M.dstM;
+    fwd->M_Cnd = M.Cnd;
+    fwd->M_icode = M.icode;
+    fwd->M_valA = M.valA;
+
+    //printf("setting fwd->M_valA to %d\n", fwd->M_valA);
+    if(!W_stall(stat))    
+        updateWregister(stat, M.icode, M.valE, valM, M.dstE, M.dstM);
 }
 
 /* memoryControl
@@ -88,6 +87,10 @@ int memoryAddr() {
     else if (M.icode == POPL || M.icode == RET)
         return M.valA;
     return 0;
+}
+
+bool W_stall(unsigned int W_stat){
+    return W_stat == SADR || W_stat == SINS || W_stat == SINS;
 }
 
 /* getMregister

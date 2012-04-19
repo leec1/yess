@@ -16,17 +16,23 @@
 int clockCount;
 bool stop;
 
-unsigned int e_dstE, e_valE;
+static fwdStruct fwd;
+
+/*unsigned int e_dstE, e_valE;
 unsigned int M_dstM, M_dstE;
 unsigned int m_valM, M_valE;
 unsigned int W_dstM, W_dstE;
 unsigned int W_valM, W_valE;
 unsigned int M_Cnd;
-unsigned int M_icode;
 unsigned int M_valA;
+unsigned int E_dstM;
 unsigned int W_icode;
+unsigned int M_icode;
+unsigned int E_icode;
+unsigned int D_icode;*/
 
 void initialize();
+void initFwdStruct();
 
 int main(int argc, char * argv[]) {
     if (argc < 2) {
@@ -47,14 +53,11 @@ int main(int argc, char * argv[]) {
     }
     
     while(!stop) {
-        stop = writebackStage(&W_dstE, &W_valE, &W_icode);
-        memoryStage(&W_valE, &W_valM, &W_dstE, &W_dstM, &m_valM,
-                    &M_dstE, &M_dstM, &M_valE, &M_Cnd, &M_icode,
-                    &M_valA);
-        executeStage(&e_dstE, &e_valE);
-        decodeStage(&W_dstE, &W_valE, &e_dstE, &e_valE, &M_dstM,
-                    &m_valM, &M_dstE, &M_valE, &W_dstM, &W_valM);
-        fetchStage(&M_Cnd, &M_icode, &M_valA, &W_icode);
+        stop = writebackStage(&fwd);
+        memoryStage(&fwd);
+        executeStage(&fwd);
+        decodeStage(&fwd);
+        fetchStage(&fwd);
         clockCount++;
     }
 
@@ -73,16 +76,46 @@ void initialize() {
     clockCount = 0;
     stop = FALSE;
     
-    W_valE = 0;
-    W_dstE = 0;
-    
+    initFwdStruct();    
     initializeFuncPtrArray();
     initializeCC();
+    
     clearMemory();
     clearRegisters();
+    
     clearFregister();
     clearDregister();
     clearEregister();
     clearMregister();
     clearWregister();
+}
+
+void initFwdStruct() {
+    //fetch
+    fwd.d_srcA = 0;
+    fwd.d_srcB = 0;
+    //decode
+    fwd.D_icode = 0;
+    //execute
+    fwd.E_icode = 0;
+    fwd.e_Cnd = 0;
+    fwd.e_dstE = 0;
+    fwd.e_valE = 0;
+    fwd.E_dstM = 0;
+    //memory
+    fwd.M_icode = 0;
+    fwd.M_Cnd = 0;
+    fwd.m_stat = 0;
+    fwd.M_dstM = 0;
+    fwd.M_dstE = 0;
+    fwd.m_valM = 0;
+    fwd.M_valE = 0;
+    fwd.M_valA = 0;
+    //writeback
+    fwd.W_icode = 0;
+    fwd.W_stat = 0;
+    fwd.W_dstM = 0;
+    fwd.W_dstE = 0;
+    fwd.W_valM = 0;
+    fwd.W_valE = 0;
 }
