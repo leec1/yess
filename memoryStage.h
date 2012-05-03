@@ -12,10 +12,6 @@ typedef struct {
 
 mregister getMregister();
 
-/*void memoryStage(unsigned int *m_valM, unsigned int *M_dstE,
-                 unsigned int *M_dstM, unsigned int *M_valE,
-                 unsigned int *M_Cnd, unsigned int *M_icode,
-                 unsigned int *M_valA);*/
 void memoryStage(fwdStruct *fwd);
 
 void memoryControl(bool *readC, bool *writeC);
