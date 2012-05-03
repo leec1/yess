@@ -14,9 +14,6 @@ static wregister W;
  * Returns:  bool - stat == AOK
  * Modifies: *W_dstE, *W_valE, *W_icode
  */
-/*bool writebackStage(unsigned int *W_icode,
-                    unsigned int *W_dstE, unsigned int *W_valE,
-                    unsigned int *W_dstM,  unsigned int *W_valM) {*/
 bool writebackStage(fwdStruct *fwd) {
     fwd->W_dstE = W.dstE;
     fwd->W_valE = W.valE;
@@ -24,12 +21,10 @@ bool writebackStage(fwdStruct *fwd) {
     fwd->W_valM = W.valM;
     fwd->W_dstM = W.dstM;
     fwd->W_stat = W.stat;
-    //printf("*WvalM set to %d\n", fwd->W_valM);
     
     switch (W.stat) {
         case SAOK:
             break;
-            //return FALSE;
         case SINS:
             printf("Invalid instruction\n");
             dumpProgramRegisters();
@@ -44,8 +39,6 @@ bool writebackStage(fwdStruct *fwd) {
             return TRUE;
         case SHLT:
             return TRUE;       
-        default:
-            printf("uhhhh\n");
     }
     
     setRegister(W.dstE, W.valE);
@@ -82,7 +75,6 @@ wregister getWregister() {
  * Modifies: wregister W
  */
 void clearWregister() {
-    //clearBuffer((char *) &W, sizeof(W));
     W.stat = SAOK;
     W.icode = NOP;
     W.valE = 0;

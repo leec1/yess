@@ -18,18 +18,6 @@ bool stop;
 
 static fwdStruct fwd;
 
-/*unsigned int e_dstE, e_valE;
-unsigned int M_dstM, M_dstE;
-unsigned int m_valM, M_valE;
-unsigned int W_dstM, W_dstE;
-unsigned int W_valM, W_valE;
-unsigned int M_Cnd;
-unsigned int M_valA;
-unsigned int E_dstM;
-unsigned int W_icode;
-unsigned int M_icode;
-unsigned int E_icode;
-unsigned int D_icode;*/
 
 void initialize();
 void initFwdStruct();
@@ -90,18 +78,27 @@ void initialize() {
     clearWregister();
 }
 
+/* initFwdStuct
+ *      Initializes the fowarding struct.
+ * Params:  none
+ * Returns: void
+ * Modifies: fwd
+ */
 void initFwdStruct() {
     //fetch
     fwd.d_srcA = 0;
     fwd.d_srcB = 0;
+    
     //decode
     fwd.D_icode = 0;
+    
     //execute
     fwd.E_icode = 0;
     fwd.e_Cnd = 0;
     fwd.e_dstE = 0;
     fwd.e_valE = 0;
     fwd.E_dstM = 0;
+    
     //memory
     fwd.M_icode = 0;
     fwd.M_Cnd = 0;
@@ -111,6 +108,7 @@ void initFwdStruct() {
     fwd.m_valM = 0;
     fwd.M_valE = 0;
     fwd.M_valA = 0;
+    
     //writeback
     fwd.W_icode = 0;
     fwd.W_stat = 0;

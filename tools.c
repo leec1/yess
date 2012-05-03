@@ -7,7 +7,7 @@
  * Params:   char *reg - the byte address in memory
  *           uint size - the number of elements to zero out
  * Returns:  void
- * Modifies: Memory. Can I be more general than that?
+ * Modifies: Specified Memory Range
  */
 void clearBuffer(char *reg, unsigned int size) {
     unsigned int i;

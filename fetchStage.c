@@ -8,21 +8,9 @@
 #include "memoryStage.h"
 #include "writebackStage.h"
 
-/*int selectPC(int predPC, unsigned int *M_Cnd, unsigned int *M_icode,
-             unsigned int *M_valA, unsigned int *W_icode, unsigned int *W_valM);*/
 int selectPC(int predPC, fwdStruct *fwd);
 
 bool F_bubble();
-
-/*bool F_stall(unsigned int E_icode, unsigned int E_dstM, unsigned int d_srcA,
-             unsigned int d_srcB, unsigned int D_icode, unsigned int E_icode,
-             unsigned int M_icode);
-
-bool D_stall(unsigned int E_icode, unsigned int E_dstM, unsigned int d_srcA, unsigned int d_srcB);
-
-bool D_bubble(unsigned int E_icode, unsigned int e_Cnd, unsigned int E_dstM, unsigned int d_srcA,
-              unsigned int d_srcB, unsigned int D_icode, unsigned int E_icode, unsigned int M_icode);*/
-
 bool F_stall(fwdStruct *fwd);
 
 bool D_bubble(fwdStruct *fwd);
@@ -36,14 +24,9 @@ static fregister F;
  * Returns:  void
  * Modifies: Decode Register
  */
-/*void fetchStage(unsigned int *M_Cnd, unsigned int *M_icode,
-                unsigned int *M_valA, unsigned int *W_icode,
-                unsigned int *W_valM) {*/
 void fetchStage(fwdStruct *fwd) {
     bool memError;
     unsigned int f_pc = selectPC(F.predPC, fwd);
-    //printf("PC = %x\n", f_pc);
-    //F.predPC = f_pc;
 
     unsigned char inst = getByte(f_pc, &memError);
     
@@ -68,68 +51,51 @@ void fetchStage(fwdStruct *fwd) {
         unsigned char byte2 = getByte(f_pc+off+2, &memError);
         unsigned char byte3 = getByte(f_pc+off+3, &memError);
         valC = buildWord(byte0, byte1, byte2, byte3);
-        if (memError) stat = SADR;
+        if (memError)
+            stat = SADR;
     }
 
     if (icode == HALT) {
-        //F.predPC += 1;
         f_pc += 1;
-        valP = f_pc;//F.predPC;
+        valP = f_pc;
         stat = SHLT;
-    } else if (icode == NOP || icode == RET){
-        //F.predPC += 1;
+    }
+    else if (icode == NOP || icode == RET){
         f_pc += 1;
-        valP = f_pc;//F.predPC;
+        valP = f_pc;
     }
     else if (icode == CMOV || icode == OPL || icode == PUSHL || icode == POPL){
-        //F.predPC += 2;
         f_pc += 2;
-        valP = f_pc;//F.predPC;
+        valP = f_pc;
     }
     else if (icode == DUMP){
-        //F.predPC += 5;
         f_pc += 5;
-        valP = f_pc;//F.predPC;
+        valP = f_pc;
     }
     else if (icode == IRMOVL || icode == RMMOVL || icode == MRMOVL){
-        //F.predPC += 6;
         f_pc += 6;
-        valP = f_pc; //F.predPC;
+        valP = f_pc;
     }
     else if (icode == JXX || icode == CALL){
-        valP = f_pc + 5; //F.predPC + 5;
-        //printf("\nvalP = %d\n", valP);
-        //F.predPC = valC;
+        valP = f_pc + 5;
         f_pc = valC;
     }
     else {
-        //F.predPC += 1;
         f_pc += 1;
-        valP = f_pc; //F.predPC;
+        valP = f_pc; 
         stat = SINS;
     }
    
-    if(F_stall(fwd)){
-       // clearDregister();   
-    }else{
-        F.predPC = f_pc;
-    }
-    if(F_bubble()){
+    if(F_bubble())
         clearFregister();
-    }
+    else if(!F_stall(fwd))
+        F.predPC = f_pc;
     
-//    if(D_bubble(fwd)){
-//        clearDregister();
-//        return;
-//    }
-    if(D_stall(fwd)){
-        //clearEregister();
-    }else{
-        updateDregister(stat, icode, ifun, rA, rB, valC, valP); 
-    }
-
     if(D_bubble(fwd))
         clearDregister();
+    else if(!D_stall(fwd))
+        updateDregister(stat, icode, ifun, rA, rB, valC, valP);
+        
 }
 
 /* instructionNeedsRegByte
@@ -156,36 +122,47 @@ int need_valC(int icode) {
     return 0;
 }
 
+/* F_bubble
+ *      Determines if the F Register needs to be bubbled
+ * Params:   none
+ * Returns:  bool - TRUE if needs to be bubbled
+ * Modifies: none
+ */
 bool F_bubble() {
     return FALSE;
 }
 
-/*bool F_stall(unsigned int E_icode, unsigned int E_dstM, unsigned int d_srcA,
-             unsigned int d_srcB, unsigned int D_icode, M_icode) {*/
+/* F_stall
+ *      Determines if the F Register needs to be stalled
+ * Params:   fwdStruct *fwd  - Fowarding Struct
+ * Returns:  bool            - TRUE if needs to be stalled
+ * Modifies: none
+ */
 bool F_stall(fwdStruct *fwd) {
     return  ((fwd->E_icode == MRMOVL || fwd->E_icode == POPL) &&
                 (fwd->E_dstM == fwd->d_srcA || fwd->E_dstM == fwd->d_srcB)) ||
             (fwd->D_icode == RET || fwd->E_icode == RET || fwd->M_icode == RET);
 }
 
-/*bool D_bubble(unsigned int E_icode, unsigned int e_Cnd, unsigned int E_dstM, unsigned int d_srcA,
-              unsigned int d_srcB, unsigned int D_icode, unsigned int E_icode, unsigned int M_icode){*/
+/* D_bubble
+ *      Determines if the D Register needs to be bubbled
+ * Params:   fwdStruct *fwd  - Forwarding Struct
+ * Returns:  bool            - TRUE if needs to be bubbled
+ * Modifies: none
+ */
 bool D_bubble(fwdStruct *fwd) { 
-    /*
-     * # Mispredicted branch
-     * (E_icode == IJXX && !e_Cnd) ||
-     * # Stalling at fetch while ret passes through pipeline
-     * # but not condition for a load/use hazard
-     * !(E_icode in { IMRMOVL, IPOPL } && E_dstM in { d_srcA, d_srcB }) &&
-     *   IRET in { D_icode, E_icode, M_icode };
-     */
     return (fwd->E_icode == JXX && !(fwd->e_Cnd)) ||
            (!((fwd->E_icode == MRMOVL || fwd->E_icode == POPL) &&
                (fwd->E_dstM == fwd->d_srcA || fwd->E_dstM == fwd->d_srcB)) &&
                (fwd->D_icode == RET || fwd->E_icode == RET || fwd->M_icode == RET));
 }
 
-//bool D_stall(unsigned int E_icode, unsigned int E_dstM, unsigned int d_srcA, unsigned int d_srcB){
+/* D_stall
+ *      Determines if the D Register needs to be stalled
+ * Params:   fwdStruct *fwd  - Forwarding Struct
+ * Returns:  bool            - TRUE if needs to be stalled
+ * Modifies: none
+ */
 bool D_stall(fwdStruct *fwd) {
     return (fwd->E_icode == MRMOVL || fwd->E_icode == POPL) &&
            (fwd->E_dstM == fwd->d_srcA || fwd->E_dstM == fwd->d_srcB);
@@ -208,23 +185,23 @@ fregister getFregister() {
  * Modifies: fregister F
  */
 void clearFregister() {
-    //clearBuffer((char *) &F, sizeof(F));
     F.predPC = 0;
 }
 
-//int selectPC(int predPC, unsigned int *M_Cnd, unsigned int *M_icode, unsigned int *M_valA, unsigned int *W_icode, unsigned int *W_valM) {
+/* selectPC
+ *      Determines the PC, based on forwarded values
+ * Params:   predPC - Incremented PC
+ *           fwd    - Fowarding Struct
+ * Returns:  int    - Selected PC value
+ * Modifies: none
+ */
 int selectPC(int predPC, fwdStruct *fwd) {
-    //wregister W = getWregister();
-    //mregister M = getMregister();
-
-    if (fwd->M_icode == JXX && !fwd->M_Cnd) {
-        //printf("Mispredicted Branch, returning %d\n", *M_valA);
+    if (fwd->M_icode == JXX && !fwd->M_Cnd)
         return fwd->M_valA;
-    }
-    if (fwd->W_icode == RET){
-        //printf("\nRET, returning %d\n", *W_valM);
+    
+    if (fwd->W_icode == RET)
         return fwd->W_valM;
-    }
+   
     return predPC;
 }
 

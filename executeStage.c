@@ -17,12 +17,10 @@ void setCnd(unsigned int fCode);
 
 /* executeStage
  *      Handles the main combination logic of the execute stage.
- * Params:   uint *e_dstE - //TODO: fix
- *           uint *e_valE -
+ * Params:   fwdStruct *fwd - contains a bunch of forwarding stuff
  * Returns:  void
  * Modifies: Cnd
  */
-//void executeStage(unsigned int *e_dstE, unsigned int *e_valE) {
 void executeStage(fwdStruct *fwd) {
     Cnd = FALSE;
     int valE = 0;
@@ -43,19 +41,18 @@ void executeStage(fwdStruct *fwd) {
     fwd->e_Cnd = Cnd;
     fwd->E_icode = E.icode;
         
-    //if(M_bubble(fwd)){        
-    //    clearMregister();
-    //}else
-    if(M_stall()){
-        //clearWregister();
-    }else{
-        updateMregister(E.stat, E.icode, Cnd, valE, E.valA, dstE, E.dstM);
-    }
     if(M_bubble(fwd))
         clearMregister();
+    else if(!M_stall())
+        updateMregister(E.stat, E.icode, Cnd, valE, E.valA, dstE, E.dstM);
 }
 
-//placeholder function for the function pointer array
+/* doNothing
+ *      Function that does nothing in the FuncPtr array
+ * Params:   none
+ * Returns:  int  - 0
+ * Modifies: none
+ */
 int doNothing() {
     return 0;
 }
@@ -120,7 +117,8 @@ int performOpl() {
                 ((isNeg(E.valB) && isNeg(E.valA) && !isNeg(val))  ||
                 (!isNeg(E.valB) && !isNeg(E.valA) && isNeg(val))))
                 setCC(OF, 1);
-            else if(canUpdateCC) setCC(OF, 0);
+            else if(canUpdateCC)
+                setCC(OF, 0);
             break;
         case SUB:
             val = E.valB - E.valA;
@@ -128,14 +126,17 @@ int performOpl() {
                 ((isNeg(E.valB) && !isNeg(E.valA) && !isNeg(val)) ||
                 (!isNeg(E.valB) && isNeg(E.valA) && isNeg(val))))
                 setCC(OF, 1);
-            else if(canUpdateCC) setCC(OF, 0);
+            else if(canUpdateCC)
+                setCC(OF, 0);
             break;
         case AND:
-            if(canUpdateCC) setCC(OF, 0);
+            if(canUpdateCC)
+                setCC(OF, 0);
             val = E.valB & E.valA;
             break;
         case XOR:
-            if(canUpdateCC) setCC(OF, 0);
+            if(canUpdateCC)
+                setCC(OF, 0);
             val =  E.valB ^ E.valA;
             break;
         default:
@@ -146,15 +147,33 @@ int performOpl() {
     return val;
 }
 
+/* performJXX
+ *      Simulates the JXX instruction.
+ * Params:   none
+ * Returns:  int - E.valA
+ * Modifies: Cnd
+ */
 int performJXX() {
     setCnd(E.ifun);
     return E.valA;
 }
 
+/* performCall
+ *      Simulates the CALL instruction.
+ * Params:   none
+ * Returns:  int - E.valB - 4
+ * Modifies: none
+ */
 int performCall() {
     return E.valB - 4;
 }
 
+/* performRet
+ *      Simulates the RET instruction.
+ * Params:   none
+ * Returns:  int - E.valB + 4
+ * Modifies: none
+ */
 int performRet() {
     return E.valB + 4;
 }
@@ -191,27 +210,35 @@ int performDump() {
     return E.valC;
 }
 
+/* setCnd
+ *      Sets the Cnd based on Condition Codes
+ * Params:   u int fcode    - Function Code
+ * Returns:  void
+ * Modifies: Cnd
+ */
 void setCnd(unsigned int fCode) {
     switch (fCode) {
-        case 0:      // RRMOVL + JMP
+        case 0:   
             Cnd = TRUE;
             break;
-        case CMOVLE: // LE
-            Cnd = (getCC(SF) && !getCC(OF)) || (!getCC(SF) && getCC(OF)) || getCC(ZF);
+        case CMOVLE:
+            Cnd = (getCC(SF) && !getCC(OF)) ||
+                  (!getCC(SF) && getCC(OF)) ||
+                  getCC(ZF);
             break;
-        case CMOVL:  // L
+        case CMOVL: 
             Cnd = (getCC(SF) && !getCC(OF)) || (!getCC(SF) && getCC(OF));
             break;
-        case CMOVE:  // E
+        case CMOVE: 
             Cnd = getCC(ZF);
             break;
-        case CMOVNE: // NE
+        case CMOVNE:
             Cnd = !getCC(ZF);
             break;
-        case CMOVGE: // GE
+        case CMOVGE:
             Cnd = (getCC(SF) && getCC(OF)) || (!getCC(SF) && !getCC(OF));
             break;
-        case CMOVG: // G
+        case CMOVG: 
             Cnd = (getCC(SF)  && getCC(OF)  && !getCC(ZF)) ||
                   (!getCC(SF) && !getCC(OF) && !getCC(ZF));
             break;
@@ -228,7 +255,8 @@ void setCnd(unsigned int fCode) {
  * Modifies: none
  */
 void updateCC(int val) {    
-    if (!canUpdateCC) return;
+    if (!canUpdateCC)
+        return;
     if (val == 0) {
         setCC(ZF, 1);
         setCC(SF, 0);
@@ -241,10 +269,22 @@ void updateCC(int val) {
     }
 }
 
+/* M_stall
+ *      Determines if the M Register needs to be stalled
+ * Params:   none
+ * Returns:  bool - TRUE if needs to be stalled
+ * Modifies: none
+ */
 bool M_stall() {
     return FALSE;
 }
 
+/* M_bubble
+ *      Determines if the M Register needs to be bubbled
+ * Params:   fwdStruct fwd  - Forwarding Struct
+ * Returns:  bool           - TRUE if needs to be bubbled
+ * Modifies: none
+ */
 bool M_bubble(fwdStruct *fwd) {
     return (fwd->m_stat == SADR || fwd->m_stat == SINS || fwd->m_stat == SHLT) ||
            (fwd->W_stat == SADR || fwd->W_stat == SINS || fwd->W_stat == SHLT);
@@ -267,7 +307,6 @@ eregister getEregister() {
  * Modifies: eregister E
  */
 void clearEregister() {
-    //clearBuffer((char *) &E, sizeof(E));
     canUpdateCC = TRUE;
     E.stat = SAOK;
     E.icode = NOP;
@@ -281,6 +320,22 @@ void clearEregister() {
     E.srcB = RNONE;
 }
 
+/* updateEregister
+ *      Sets the values in the Execute PIPE register to the specified values.
+ * Params:   int stat    - Status of the Pipeline
+ *           int icode   - Current Instruction
+ *           int ifun    - Additional Information on Current Instruction
+ *           int valC    - Current Condition
+ *           int valA    - Val E of current Instruction
+ *           int valB    - Val A of current Instruction
+ *           int dstE    - Dst E of current Instruction
+ *           int dstM    - Dst M of current Instruction
+ *           int srcA    - Src A of current Instruction
+ *           int srcB    - Src B of current Instruction
+ *           
+ * Returns:  void
+ * Modifies: eregister E
+ */
 void updateEregister(int stat, int icode, int ifun, int valC, int valA,
                      int valB, int dstE, int dstM, int srcA, int srcB) {
     E.stat = stat;
@@ -295,6 +350,12 @@ void updateEregister(int stat, int icode, int ifun, int valC, int valA,
     E.srcB = srcB;
 }
 
+/* initializeFuncPtrArray
+ *      Intializes the Function Pointer Array
+ * Params:   none
+ * Returns:  void
+ * Modifies: funcArr[]
+ */
 void initializeFuncPtrArray() {
     funcArr[HALT] = &doNothing;
     funcArr[NOP] = &doNothing;
@@ -310,6 +371,7 @@ void initializeFuncPtrArray() {
     funcArr[POPL] = &performPop;
     funcArr[DUMP] = &performDump;
 }
+
 
 void printEregister() {
     printf("\n=== Execute Stage ===\n");

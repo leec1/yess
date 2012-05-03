@@ -13,19 +13,14 @@ bool W_stall(fwdStruct *fwd);
 
 /* memoryStage
  *      Controls the main combinational logic of the memory stage
- * Params:   //TODO: fix
+ * Params:   fwdStruct *fwd - contains a bunch of forwarding info 
  * Returns:  void
  * Modifies: Writeback Register
  */
-/*void memoryStage(unsigned int *m_valM, unsigned int *M_dstE,
-                 unsigned int *M_dstM, unsigned int *M_valE,
-                 unsigned int *M_Cnd, unsigned int *M_icode,
-                 unsigned int *M_valA) {*/
 void memoryStage(fwdStruct *fwd) {
 
-    if (M.stat == SINS || M.stat == SADR || M.stat == SHLT){
+    if (M.stat == SINS || M.stat == SADR || M.stat == SHLT)
         canUpdateMem = FALSE;
-    }
  
     int valM = M.valA, stat = M.stat;
 
@@ -41,12 +36,10 @@ void memoryStage(fwdStruct *fwd) {
     if (writeC && canUpdateMem)
         putWord(memAddr, M.valA, &memError);
 
-    if (memError){
+    if (memError) {
         stat = SADR;
         canUpdateMem = FALSE;
     }
-
-
     
     fwd->M_valE = M.valE;
     fwd->m_valM = valM;
@@ -57,14 +50,9 @@ void memoryStage(fwdStruct *fwd) {
     fwd->M_valA = M.valA;
     fwd->m_stat = stat;
 
-
-
-    //printf("setting fwd->M_valA to %d\n", fwd->M_valA);
-    if(W_stall(fwd)){
-        
-    }else{
+    if (!W_stall(fwd))
         updateWregister(stat, M.icode, M.valE, valM, M.dstE, M.dstM);
-    }
+    
 }
 
 
@@ -97,7 +85,13 @@ int memoryAddr() {
     return 0;
 }
 
-bool W_stall(fwdStruct *fwd){
+/* W_stall
+ *      Determines if the W Register needs to be stalled
+ * Params:   fwdStruct *fwd  - Forwarding Struct
+ * Returns:  bool            - TRUE if needs to be stalled
+ * Modifies: none
+ */
+bool W_stall(fwdStruct *fwd) {
     return fwd->W_stat == SADR || fwd->W_stat == SINS || fwd->W_stat == SHLT;
 }
 
@@ -118,7 +112,6 @@ mregister getMregister() {
  * Modifies: mregister M
  */
 void clearMregister() {
-    //clearBuffer((char *) &M, sizeof(M));
     canUpdateMem = TRUE;
     M.stat = SAOK;
     M.icode = NOP;
@@ -129,6 +122,20 @@ void clearMregister() {
     M.dstM = RNONE;
 }
 
+
+/* updateMregister
+ *      Sets the values in the Memory PIPE register to the specified values.
+ * Params:   int stat    - Status of the Pipeline
+ *           int icode   - Current Instruction
+ *           int Cnd     - Current Condition
+ *           int valE    - Val E from current Instruction
+ *           int valA    - Val A from current Instruction
+ *           int dstE    - Dst E from current Instruction
+ *           int dstM    - Dst M of current Instruction
+ *           
+ * Returns:  void
+ * Modifies: mregister M
+ */
 void updateMregister(int stat, int icode, int Cnd, int valE, int valA,
                      int dstE, int dstM) {
     M.stat = stat;

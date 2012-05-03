@@ -12,7 +12,6 @@ int lineNum, addr, prevAddr, numBytes, prevBytes;
 int testLine(char *line);
 long int getAddress(char *line);
 void storeData(char *line);
-//char * getData(char *line);
 
 /* openFile
  *      Attempts to open the #EXT file with the specified filename.
@@ -22,7 +21,8 @@ void storeData(char *line);
  */
 bool openFile(char *filename) {
     char *ext = &(filename[(strlen(filename)-strlen(EXT))]);
-    if (strcmp(ext, EXT)) return FALSE;
+    if (strcmp(ext, EXT))
+        return FALSE;
     return (file = fopen(filename, "r")) != NULL;
 }
 
@@ -35,24 +35,28 @@ bool openFile(char *filename) {
  *
  */
 bool load() {
-    if (file == NULL) return FALSE;
-    char line[128];                 // storage for line data
+    if (file == NULL)
+        return FALSE;
+    char line[128];
     lineNum = 1;
     while (fgets(line, 128, file) != NULL) {
-        //fscanf(file, "%[^\n]", line); //handy dandy "read until \n"
-        //if (fgetc(file) == EOF) break;
-        //printf("%s\n", line);
         int result = testLine(line);
-        if (result >= 0) lineNum++; // count good lines and comments
-        if (result == 0) continue;  // dont bother with comment lines 
+        if (result >= 0)
+            // we want to count good lines and comments
+            lineNum++;
+        if (result == 0)
+            // comment line, just ignore and move on
+            continue;
         if (result < 0) {
+            // found an error, stop parsing
             printf("Error on line %d\n%s\n", lineNum, line);
-            return FALSE;           // found an error, stop parsing
-        } else {
-            storeData(line);     // good line, store it
-        }
+            return FALSE;
+        } else
+            // good line, store it
+            storeData(line);
     }
-    fclose(file);                   // because we aren't barbarians
+    // because we aren't barbarians
+    fclose(file);
     return TRUE;
 }
 
@@ -67,29 +71,41 @@ bool load() {
  */
 int testLine(char *line) {
     int i;
-    for (i=0; i<22; i++) { // this loop tests for commentness
-        if (line[i] != ' ') break;
-        if (i == 21) return LINE_COMMENT;
-    }
 
+    // this loop tests for commentness
+    for (i=0; i<22; i++) {
+        if (line[i] != ' ')
+            break;
+        if (i == 21)
+            return LINE_COMMENT;
+    }
+    
+    // this tests for a lot of things, see above.
     if ((line[0] != ' ' && line[0] != 1) || line[1] != ' ' || line[2] != '0' ||
          line[3] != 'x' || line[7] != ':'|| line[8] != ' ' || line[21]!= ' ' ||
-         line[22]!= '|') { // this tests for a lot of things. see above.
+         line[22]!= '|') {
         return LINE_ERROR;
     }
 
-    int numBits = strcspn(&line[9], " "); // cant have a nibble instruction
-    if ((numBits & 1) != 0) return LINE_ERROR; // remember, X%2 == X&1
+    int numBits = strcspn(&line[9], " ");\
+    // cant have a nibble instruction
+    if ((numBits & 1) != 0)
+        return LINE_ERROR;
 
-    addr = getAddress(line); // cant go backwards in addressing (?)
-    if (addr < prevAddr) return LINE_ERROR;
+    addr = getAddress(line);
+    // cant go backwards in addressing
+    if (addr < prevAddr)
+        return LINE_ERROR;
     
-    numBytes = numBits >> 1; // need enough room in memory for instructions
-    if (lineNum > 1 && (prevAddr + prevBytes > addr)) return LINE_ERROR;
+    numBytes = numBits >> 1;
+    // need enough room for instructions
+    if (lineNum > 1 && (prevAddr + prevBytes > addr))
+        return LINE_ERROR;
 
+    // line is GOOD
     prevBytes = numBytes;
     prevAddr = addr;
-    return LINE_GOOD; // good line
+    return LINE_GOOD;
 }
 
 /* getAddress
@@ -118,25 +134,3 @@ void storeData(char *line) {
     }
 }
 
-/*long long int getData(char *line) {
-    char data[numBytes];
-    long long int rData = 0;
-    //data[numBytes-1] = '\0';
-    strncpy(data, &line[9], numBytes*2);
-    return strtoll(data, NULL, 16);
-    //printf("0x%llx  ::  %s\n",rData, line);
-    //printf("%d: bytes=%d\n", lineNum, numBytes);
-    //if (numBytes > 0) printf("line data: %s\n", data);
-}*/
-
-/*char* getData(char *line) {
-    char data[numBytes];
-    char byte[2];
-    int i;
-    for (i=0; i<numBytes*2; i+=2) {
-        strncpy(byte, &line[i+9], 2);
-        data[i] = strtol(byte, NULL, 16);
-    }
-    printf("%s -> %d\n", line[9], data);
-    return data;
-}*/

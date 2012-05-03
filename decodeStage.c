@@ -13,24 +13,10 @@ bool E_stall();
 
 /* decodeStage
  *      Handles the main combinational logic of the decode stage.
- * Params:   uint *W_dstE - dstE from Writeback Register
- *           uint *W_valE - valE from Writeback Register
- *           uint *e_dstE -
- *           uint *e_valE -
- *           uint *M_dstM -
- *           uint *m_valM -
- *           uint *M_dstE -
- *           uint *M_valE -
- *           uint *W_dstM -
- *           uint *W_valM -
+ * Params:   fwdStruct *fwd - contains a bunch of forwarding values
  * Returns:  void
  * Modifies: Execute Register
  */
-/*void decodeStage(unsigned int *W_dstE, unsigned int *W_valE,
-                 unsigned int *e_dstE, unsigned int *e_valE,
-                 unsigned int *M_dstM, unsigned int *m_valM,
-                 unsigned int *M_dstE, unsigned int *M_valE,
-                 unsigned int *W_dstM, unsigned int *W_valM) {*/
 void decodeStage(fwdStruct *fwd) {
     int dstE = getDstE();
     int dstM = getDstM();
@@ -40,28 +26,14 @@ void decodeStage(fwdStruct *fwd) {
     fwd->d_srcA = srcA;
     fwd->d_srcB = srcB;
     fwd->D_icode = D.icode;
-    /*int valA = selectFwdA(srcA, *W_dstE, *W_valE, *e_dstE, *e_valE, *M_dstM,
-                          *m_valM, *M_dstE, *M_valE, *W_dstM, *W_valM);
-    int valB = forwardB(srcB, *W_dstE, *W_valE, *e_dstE, *e_valE, *M_dstM,
-                        *m_valM, *M_dstE, *M_valE, *W_dstM, *W_valM);
-    updateEregister(D.stat, D.icode, D.ifun, D.valC, valA, valB, dstE,
-                    dstM, srcA, srcB);*/
     int valA = selectFwdA(srcA, fwd);
     int valB = forwardB(srcB, fwd);
    
-//    if (E_bubble(srcA, srcB, fwd)){
-//        clearEregister();
-//        return;
-//    }
-    if (E_stall()) {
-        //clearMregister();
-    } else {
-        updateEregister(D.stat, D.icode, D.ifun, D.valC, valA, valB, dstE,
-                    dstM, srcA, srcB);
-    }
-
-    if(E_bubble(srcA, srcB, fwd))
+    if (E_bubble(srcA, srcB, fwd))
         clearEregister();
+    else if (!E_stall())
+        updateEregister(D.stat, D.icode, D.ifun, D.valC, valA, valB, dstE,
+                        dstM, srcA, srcB);
 }
 
 /* getSrcA
@@ -124,78 +96,72 @@ int getDstM() {
 /* selectFwdA
  *      Helper to decide if we need to forward data through the pipeline.
  * Params:   uint d_srcA - intermediate srcA
+ *           fwdStruct *fwd - contains a bunch of forwarding stuff
  * Returns:  int - the value to forward
  * Modifies: none
  */
 int selectFwdA(unsigned int d_srcA, fwdStruct *fwd) {
-    if (D.icode == CALL || D.icode == JXX) return D.valP;
-    if (d_srcA == RNONE) return 0;
-    if (d_srcA == fwd->e_dstE){
-//        printf("\nA: Using e_valE\n");   
+    if (D.icode == CALL || D.icode == JXX)
+        return D.valP;
+    if (d_srcA == RNONE)
+        return 0;
+    if (d_srcA == fwd->e_dstE)
         return fwd->e_valE; 
-    }
-    if (d_srcA == fwd->M_dstM){
-//        printf("\nA: Using m_valM\n");   
+    if (d_srcA == fwd->M_dstM)
         return fwd->m_valM;
-    }
-    if (d_srcA == fwd->M_dstE){
-//        printf("\nA: Using M_valE\n");   
+    if (d_srcA == fwd->M_dstE)
         return fwd->M_valE;
-    }
-    if (d_srcA == fwd->W_dstM){
-//        printf("\nA: Using W_valM\n");   
+    if (d_srcA == fwd->W_dstM)
         return fwd->W_valM;
-    }
-    if (d_srcA == fwd->W_dstE){
-//        printf("\nA: Using W_valE\n");   
+    if (d_srcA == fwd->W_dstE)
         return fwd->W_valE;
-    }
-//    printf("\nA: No forwarding neccessary\n");
     return getRegister(d_srcA);
 }
 
 /* forwardB
  *      Helper to decide if we need to forward data through the pipeline.
- * Params:   uint d_srcA - intermediate srcA
- *           uint W_dstE - dstE from Writeback Register
- *           uint W_valE - valE from Writeback Register
+ * Params:   uint d_srcB - intermediate srcB
+ *           fwdStruct *fwd - contains a bunch of forwarding stuff
  * Returns:  int - the value to forward
  * Modifies: none
  */
-int forwardB(unsigned int d_srcB, fwdStruct *fwd){
-
-    if (d_srcB == RNONE) return 0;
-    if (d_srcB == fwd->e_dstE){
-//        printf("\nB: Using e_valE\n");   
+int forwardB(unsigned int d_srcB, fwdStruct *fwd) {
+    if (d_srcB == RNONE)
+        return 0;
+    if (d_srcB == fwd->e_dstE)
         return fwd->e_valE;
-    }
-    if (d_srcB == fwd->M_dstM){
-//        printf("\nB: Using m_valM\n");
+    if (d_srcB == fwd->M_dstM)
         return fwd->m_valM;
-    }
-    if (d_srcB == fwd->M_dstE){
-//        printf("\nB: Using M_valE\n");   
+    if (d_srcB == fwd->M_dstE)
         return fwd->M_valE;
-    }
-    if (d_srcB == fwd->W_dstM){
-//        printf("\nB: Using W_valM\n");   
+    if (d_srcB == fwd->W_dstM)
         return fwd->W_valM;
-    }
-    if (d_srcB == fwd->W_dstE){
-//        printf("\nB: Using W_valE\n");   
+    if (d_srcB == fwd->W_dstE)
         return fwd->W_valE;
-    }
-//    printf("\nB: No forwarding neccessary\n");
     return getRegister(d_srcB);
 }
 
-bool E_bubble(unsigned int d_srcA, unsigned int d_srcB, fwdStruct *fwd){
+/* E_bubble
+ *      Determines if the E Register needs to be bubbled
+ * Params:   u int d_srcA   - srcA from the current stage
+ *           u int d_srcB   - srcB from the current stage
+ *           fwdStruct *fwd - Forwarding Struct
+ * Returns:  bool - TRUE if needs to be bubbled
+ * Modifies: none
+ */
+bool E_bubble(unsigned int d_srcA, unsigned int d_srcB, fwdStruct *fwd) {
     return (fwd->E_icode == JXX && !(fwd->e_Cnd)) ||
-               ((fwd->E_icode == MRMOVL || fwd->E_icode == POPL) &&
-               (fwd->E_dstM == d_srcA || fwd->E_dstM == d_srcB));
+             ((fwd->E_icode == MRMOVL || fwd->E_icode == POPL) &&
+             (fwd->E_dstM == d_srcA || fwd->E_dstM == d_srcB));
 }
 
-bool E_stall(){
+/* E_stall
+ *      Determines if the E Register needs to be stalled
+ * Params:   none
+ * Returns:  bool - TRUE if needs to be bubbled
+ * Modifies: none
+ */
+bool E_stall() {
     return FALSE;
 }
 
@@ -216,7 +182,6 @@ dregister getDregister() {
  * Modifies: D
  */
 void clearDregister() {
-    //clearBuffer((char *) &D, sizeof(D));
     D.stat = SAOK;
     D.icode = NOP;
     D.ifun = 0;
