@@ -49,14 +49,19 @@ void decodeStage(fwdStruct *fwd) {
     int valA = selectFwdA(srcA, fwd);
     int valB = forwardB(srcB, fwd);
    
-    if (E_bubble(srcA, srcB, fwd))
-        clearEregister();
+//    if (E_bubble(srcA, srcB, fwd)){
+//        clearEregister();
+//        return;
+//    }
     if (E_stall()) {
         //clearMregister();
     } else {
         updateEregister(D.stat, D.icode, D.ifun, D.valC, valA, valB, dstE,
                     dstM, srcA, srcB);
     }
+
+    if(E_bubble(srcA, srcB, fwd))
+        clearEregister();
 }
 
 /* getSrcA
@@ -211,9 +216,14 @@ dregister getDregister() {
  * Modifies: D
  */
 void clearDregister() {
-    clearBuffer((char *) &D, sizeof(D));
+    //clearBuffer((char *) &D, sizeof(D));
     D.stat = SAOK;
     D.icode = NOP;
+    D.ifun = 0;
+    D.rA = RNONE;
+    D.rB = RNONE;
+    D.valC = 0;
+    D.valP = 0;
 }
 
 /* updateDregister

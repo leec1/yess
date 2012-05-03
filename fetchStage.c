@@ -118,13 +118,18 @@ void fetchStage(fwdStruct *fwd) {
         clearFregister();
     }
     
-    if(D_bubble(fwd))
-        clearDregister();
+//    if(D_bubble(fwd)){
+//        clearDregister();
+//        return;
+//    }
     if(D_stall(fwd)){
         //clearEregister();
     }else{
         updateDregister(stat, icode, ifun, rA, rB, valC, valP); 
     }
+
+    if(D_bubble(fwd))
+        clearDregister();
 }
 
 /* instructionNeedsRegByte
@@ -170,13 +175,13 @@ bool D_bubble(fwdStruct *fwd) {
      * # Mispredicted branch
      * (E_icode == IJXX && !e_Cnd) ||
      * # Stalling at fetch while ret passes through pipeline
-     * # but not condition for a load/use hazar
+     * # but not condition for a load/use hazard
      * !(E_icode in { IMRMOVL, IPOPL } && E_dstM in { d_srcA, d_srcB }) &&
      *   IRET in { D_icode, E_icode, M_icode };
      */
     return (fwd->E_icode == JXX && !(fwd->e_Cnd)) ||
-           !((fwd->E_icode == MRMOVL || fwd->E_icode == POPL) &&
-               ((fwd->E_dstM == fwd->d_srcA || fwd->E_dstM == fwd->d_srcB)) &&
+           (!((fwd->E_icode == MRMOVL || fwd->E_icode == POPL) &&
+               (fwd->E_dstM == fwd->d_srcA || fwd->E_dstM == fwd->d_srcB)) &&
                (fwd->D_icode == RET || fwd->E_icode == RET || fwd->M_icode == RET));
 }
 
@@ -203,7 +208,8 @@ fregister getFregister() {
  * Modifies: fregister F
  */
 void clearFregister() {
-    clearBuffer((char *) &F, sizeof(F));
+    //clearBuffer((char *) &F, sizeof(F));
+    F.predPC = 0;
 }
 
 //int selectPC(int predPC, unsigned int *M_Cnd, unsigned int *M_icode, unsigned int *M_valA, unsigned int *W_icode, unsigned int *W_valM) {

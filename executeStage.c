@@ -43,13 +43,16 @@ void executeStage(fwdStruct *fwd) {
     fwd->e_Cnd = Cnd;
     fwd->E_icode = E.icode;
         
-    if(M_bubble(fwd))
-        clearMregister();
+    //if(M_bubble(fwd)){        
+    //    clearMregister();
+    //}else
     if(M_stall()){
         //clearWregister();
     }else{
         updateMregister(E.stat, E.icode, Cnd, valE, E.valA, dstE, E.dstM);
     }
+    if(M_bubble(fwd))
+        clearMregister();
 }
 
 //placeholder function for the function pointer array
@@ -264,11 +267,18 @@ eregister getEregister() {
  * Modifies: eregister E
  */
 void clearEregister() {
-    clearBuffer((char *) &E, sizeof(E));
+    //clearBuffer((char *) &E, sizeof(E));
     canUpdateCC = TRUE;
     E.stat = SAOK;
     E.icode = NOP;
-
+    E.ifun = 0;
+    E.valC = 0;
+    E.valA = 0;
+    E.valB = 0;
+    E.dstE = RNONE;
+    E.dstM = RNONE;
+    E.srcA = RNONE;
+    E.srcB = RNONE;
 }
 
 void updateEregister(int stat, int icode, int ifun, int valC, int valA,

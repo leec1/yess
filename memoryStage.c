@@ -2,7 +2,7 @@
 #include "types.h"
 #include "tools.h"
 #include "memory.h"
-
+#include "executeStage.h"
 #include "writebackStage.h"
 #include "memoryStage.h"
 
@@ -23,9 +23,12 @@ bool W_stall(fwdStruct *fwd);
                  unsigned int *M_valA) {*/
 void memoryStage(fwdStruct *fwd) {
 
-    if (M.stat == SINS || M.stat == SADR || M.stat == SHLT)
+    if (M.stat == SINS || M.stat == SADR || M.stat == SHLT){
         canUpdateMem = FALSE;
+    }
+ 
     int valM = M.valA, stat = M.stat;
+
     bool readC = FALSE, writeC = FALSE, memError = FALSE;
     
     memoryControl(&readC, &writeC);
@@ -34,18 +37,16 @@ void memoryStage(fwdStruct *fwd) {
     
     if (readC)
         valM = getWord(memAddr, &memError);
-
-    if(memError) {
-        stat = SADR;
-        canUpdateMem = FALSE;
-    }
     
-    if (writeC && canUpdateMem) putWord(memAddr, M.valA, &memError);
+    if (writeC && canUpdateMem)
+        putWord(memAddr, M.valA, &memError);
 
     if (memError){
         stat = SADR;
         canUpdateMem = FALSE;
     }
+
+
     
     fwd->M_valE = M.valE;
     fwd->m_valM = valM;
@@ -56,12 +57,16 @@ void memoryStage(fwdStruct *fwd) {
     fwd->M_valA = M.valA;
     fwd->m_stat = stat;
 
+
+
     //printf("setting fwd->M_valA to %d\n", fwd->M_valA);
     if(W_stall(fwd)){
+        
     }else{
         updateWregister(stat, M.icode, M.valE, valM, M.dstE, M.dstM);
     }
 }
+
 
 /* memoryControl
  *      Determines if the current instruction reads and/or writes to memory
@@ -113,10 +118,15 @@ mregister getMregister() {
  * Modifies: mregister M
  */
 void clearMregister() {
-    clearBuffer((char *) &M, sizeof(M));
+    //clearBuffer((char *) &M, sizeof(M));
     canUpdateMem = TRUE;
     M.stat = SAOK;
     M.icode = NOP;
+    M.Cnd = 0;
+    M.valE = 0;
+    M.valA = 0;
+    M.dstE = RNONE;
+    M.dstM = RNONE;
 }
 
 void updateMregister(int stat, int icode, int Cnd, int valE, int valA,

@@ -82,9 +82,13 @@ wregister getWregister() {
  * Modifies: wregister W
  */
 void clearWregister() {
-    clearBuffer((char *) &W, sizeof(W));
+    //clearBuffer((char *) &W, sizeof(W));
     W.stat = SAOK;
     W.icode = NOP;
+    W.valE = 0;
+    W.valM = 0;
+    W.dstE = RNONE;
+    W.dstM = RNONE;
 }
 
 /* updateWregister
